@@ -1,0 +1,3736 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <title>Diva's Gesundheitsakte</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       VARIABLES & RESET
+    ============================================================ */
+    :root {
+      --bg:         #faf8f4;
+      --surface:    #ffffff;
+      --surface-2:  #f3f0eb;
+      --border:     #e5e0d8;
+      --green:      #2d6a4f;
+      --green-mid:  #40916c;
+      --green-lt:   #74c69d;
+      --green-pale: #d8f3dc;
+      --sage:       #8fb8a4;
+      --terra:      #b5603f;
+      --terra-pale: #fce9df;
+      --amber:      #c9882e;
+      --amber-pale: #fef3dc;
+      --red:        #c0392b;
+      --red-pale:   #fde8e8;
+      --text:       #2a2620;
+      --text-2:     #6b6460;
+      --text-3:     #a09890;
+      --radius:     13px;
+      --radius-sm:  8px;
+      --shadow:     0 2px 12px rgba(45,106,79,.07);
+      --shadow-md:  0 4px 24px rgba(45,106,79,.11);
+      --fn-display: 'Playfair Display', Georgia, serif;
+      --fn-body:    'DM Sans', system-ui, sans-serif;
+      --ease:       200ms ease;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 15px; scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+    body { font-family: var(--fn-body); background: var(--bg); color: var(--text); min-height: 100dvh; line-height: 1.6; }
+
+    /* ============================================================
+       HEADER
+    ============================================================ */
+    header {
+      background: var(--green);
+      color: #fff;
+      padding: .9rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky; top: 0; z-index: 200;
+      box-shadow: 0 2px 20px rgba(45,106,79,.35);
+    }
+    .hdr-brand { display: flex; align-items: center; gap: .65rem; }
+    .hdr-paw { font-size: 1.6rem; line-height: 1; }
+    .hdr-name { font-family: var(--fn-display); font-size: 1.2rem; font-weight: 700; letter-spacing: .02em; }
+    .hdr-sub  { font-size: .7rem; font-weight: 300; opacity: .72; letter-spacing: .08em; text-transform: uppercase; }
+    .hdr-actions { display: flex; gap: .4rem; }
+    .hdr-btn {
+      background: rgba(255,255,255,.15); border: none; border-radius: 7px;
+      color: #fff; padding: .45rem .7rem; cursor: pointer; font-size: .8rem;
+      font-family: var(--fn-body); transition: background var(--ease);
+    }
+    .hdr-btn:hover { background: rgba(255,255,255,.28); }
+
+    /* ============================================================
+       NAV TABS
+    ============================================================ */
+    nav {
+      background: var(--surface); border-bottom: 2px solid var(--border);
+      overflow-x: auto; scrollbar-width: none;
+      position: sticky; top: 53px; z-index: 199;
+    }
+    nav::-webkit-scrollbar { display: none; }
+    .nav-inner { display: flex; min-width: max-content; padding: 0 .75rem; }
+    .nav-tab {
+      display: flex; align-items: center; gap: .35rem;
+      padding: .8rem .9rem; border: none; background: none;
+      color: var(--text-2); font-family: var(--fn-body); font-size: .8rem;
+      font-weight: 500; cursor: pointer; white-space: nowrap;
+      border-bottom: 2.5px solid transparent; margin-bottom: -2px;
+      transition: color var(--ease), border-color var(--ease);
+    }
+    .nav-tab:hover  { color: var(--green); }
+    .nav-tab.active { color: var(--green); border-bottom-color: var(--green); }
+    .nav-tab .ni    { font-size: 1.05rem; }
+
+    /* ============================================================
+       MAIN LAYOUT
+    ============================================================ */
+    main { padding: 1.25rem; max-width: 780px; margin: 0 auto; }
+    .section { display: none; animation: fadeIn .18s ease; }
+    .section.active { display: block; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
+
+    /* ============================================================
+       SECTION HEADER
+    ============================================================ */
+    .sec-hdr {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 1.1rem; gap: .5rem;
+    }
+    .sec-title { font-family: var(--fn-display); font-size: 1.4rem; font-weight: 600; color: var(--green); }
+    .sec-sub   { font-size: .76rem; color: var(--text-3); margin-top: .1rem; }
+
+    /* ============================================================
+       BUTTONS
+    ============================================================ */
+    .btn {
+      display: inline-flex; align-items: center; gap: .35rem;
+      padding: .55rem 1rem; border-radius: var(--radius-sm); border: none;
+      font-family: var(--fn-body); font-size: .8rem; font-weight: 500;
+      cursor: pointer; transition: all var(--ease); white-space: nowrap;
+    }
+    .btn-primary   { background: var(--green); color: #fff; }
+    .btn-primary:hover { background: var(--green-mid); }
+    .btn-secondary { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); }
+    .btn-secondary:hover { background: var(--border); }
+    .btn-danger    { background: var(--red-pale); color: var(--red); }
+    .btn-danger:hover { background: #facaca; }
+    .btn-sm        { padding: .3rem .6rem; font-size: .74rem; }
+
+    /* ============================================================
+       CARDS
+    ============================================================ */
+    .card {
+      background: var(--surface); border-radius: var(--radius);
+      border: 1px solid var(--border); box-shadow: var(--shadow);
+      padding: 1.1rem 1.2rem; margin-bottom: .65rem;
+    }
+    .card-hdr { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: .6rem; }
+    .card-title  { font-weight: 600; font-size: .93rem; }
+    .card-sub    { font-size: .76rem; color: var(--text-2); margin-top: .12rem; }
+    .card-acts   { display: flex; gap: .35rem; flex-shrink: 0; }
+    .card-meta   { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .5rem; }
+    .chip {
+      background: var(--green-pale); color: var(--green);
+      border-radius: 20px; padding: .18rem .6rem;
+      font-size: .72rem; font-weight: 500;
+    }
+    .chip.amber { background: var(--amber-pale); color: #854d0e; }
+    .chip.terra { background: var(--terra-pale); color: var(--terra); }
+    .chip.gray  { background: var(--surface-2); color: var(--text-2); }
+    .chip.red   { background: var(--red-pale); color: var(--red); }
+
+    /* ============================================================
+       DASHBOARD SPECIFICS
+    ============================================================ */
+    .profile-banner {
+      background: linear-gradient(135deg, var(--green) 0%, var(--green-mid) 100%);
+      color: #fff; border-radius: var(--radius); padding: 1.25rem 1.4rem;
+      margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem;
+    }
+    .avatar {
+      width: 60px; height: 60px; border-radius: 50%;
+      background: rgba(255,255,255,.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.9rem; flex-shrink: 0;
+    }
+    .banner-name  { font-family: var(--fn-display); font-size: 1.5rem; font-weight: 700; }
+    .banner-breed { font-size: .82rem; opacity: .78; margin-top: .1rem; }
+
+    .stat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: .6rem; margin-bottom: 1rem; }
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: .9rem .8rem; text-align: center;
+      box-shadow: var(--shadow);
+    }
+    .stat-val   { font-family: var(--fn-display); font-size: 1.25rem; font-weight: 700; color: var(--green); }
+    .stat-label { font-size: .68rem; color: var(--text-3); margin-top: .15rem; }
+
+    .up-item {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: .7rem 1rem;
+      display: flex; align-items: center; gap: .7rem;
+      box-shadow: var(--shadow); margin-bottom: .45rem;
+    }
+    .up-icon  { font-size: 1.15rem; flex-shrink: 0; }
+    .up-info  { flex: 1; min-width: 0; }
+    .up-title { font-weight: 500; font-size: .86rem; }
+    .up-date  { font-size: .74rem; color: var(--text-2); }
+    .badge    { font-size: .68rem; font-weight: 600; padding: .18rem .48rem; border-radius: 20px; white-space:nowrap; }
+    .badge-urgent { background: var(--red-pale); color: var(--red); }
+    .badge-soon   { background: var(--amber-pale); color: #854d0e; }
+    .badge-ok     { background: var(--green-pale); color: var(--green); }
+
+    /* ============================================================
+       WEIGHT CHART
+    ============================================================ */
+    .chart-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.1rem 1.2rem;
+      margin-bottom: .75rem; box-shadow: var(--shadow);
+    }
+    .chart-label { font-size: .78rem; font-weight: 600; color: var(--text-2); margin-bottom: .6rem; }
+    #weightChart { width: 100%; height: 130px; display: block; }
+
+    /* ============================================================
+       HEAT PHASES
+    ============================================================ */
+    .phase-bar { display: flex; border-radius: 6px; overflow: hidden; height: 26px; margin: .6rem 0 .4rem; }
+    .ph { display: flex; align-items: center; justify-content: center; font-size: .65rem; font-weight: 700; color: #fff; }
+    .ph-pro  { background: #e879a0; }
+    .ph-est  { background: var(--terra); }
+    .ph-die  { background: #7b6ba8; }
+    .ph-an   { background: var(--sage); }
+    .phase-legend { display: flex; flex-wrap: wrap; gap: .75rem; font-size: .74rem; color: var(--text-2); }
+
+    /* ============================================================
+       FORM MODAL
+    ============================================================ */
+    .overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.48);
+      z-index: 300; display: flex; align-items: flex-end; justify-content: center;
+      padding: .75rem;
+    }
+    @media (min-width: 560px) { .overlay { align-items: center; } }
+    .modal {
+      background: var(--surface); border-radius: var(--radius) var(--radius) 0 0;
+      padding: 1.4rem 1.4rem 1.6rem; width: 100%; max-width: 480px;
+      max-height: 92dvh; overflow-y: auto;
+    }
+    @media (min-width: 560px) { .modal { border-radius: var(--radius); } }
+    .modal-title { font-family: var(--fn-display); font-size: 1.1rem; font-weight: 600; color: var(--green); margin-bottom: 1.1rem; }
+    .fg { display: flex; flex-direction: column; gap: .3rem; }
+    .fg label { font-size: .73rem; font-weight: 500; color: var(--text-2); text-transform: uppercase; letter-spacing: .05em; }
+    .fg input, .fg select, .fg textarea {
+      padding: .55rem .75rem; border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm); font-family: var(--fn-body); font-size: .88rem;
+      color: var(--text); background: var(--surface); transition: border-color var(--ease); width: 100%;
+    }
+    .fg input:focus, .fg select:focus, .fg textarea:focus { outline: none; border-color: var(--green-mid); }
+    .fg textarea { resize: vertical; min-height: 65px; }
+    .fg.row { flex-direction: row; align-items: center; gap: .6rem; }
+    .fg.row label { text-transform: none; font-size: .88rem; cursor: pointer; }
+    .fg.row input[type=checkbox] { width: 17px; height: 17px; accent-color: var(--green); cursor: pointer; flex-shrink: 0; }
+    .form-grid { display: grid; gap: .85rem; }
+    .form-row  { display: grid; grid-template-columns: 1fr 1fr; gap: .65rem; }
+    .modal-actions { display: flex; gap: .5rem; justify-content: flex-end; margin-top: 1.1rem; }
+
+    /* ============================================================
+       TOGGLE FILTER
+    ============================================================ */
+    .toggle-row { display: flex; background: var(--surface-2); border-radius: var(--radius-sm); padding: 3px; gap: 2px; width: fit-content; margin-bottom: .9rem; }
+    .tog {
+      padding: .3rem .8rem; border: none; border-radius: 6px;
+      background: transparent; font-family: var(--fn-body); font-size: .76rem;
+      font-weight: 500; cursor: pointer; color: var(--text-2); transition: all var(--ease);
+    }
+    .tog.active { background: var(--surface); color: var(--green); box-shadow: 0 1px 4px rgba(0,0,0,.09); }
+
+    /* ============================================================
+       PROFILE SECTION
+    ============================================================ */
+    .profile-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem; box-shadow: var(--shadow); }
+    .profile-section-label {
+      font-weight: 600; font-size: .8rem; color: var(--text-2);
+      text-transform: uppercase; letter-spacing: .06em;
+      margin: 1.1rem 0 .75rem; padding-top: 1rem; border-top: 1px solid var(--border);
+    }
+    .profile-section-label:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+
+    /* ============================================================
+       SOS BUTTON & OVERLAY
+    ============================================================ */
+    #sos-btn {
+      position: fixed; bottom: 1.4rem; right: 1.4rem; z-index: 500;
+      background: #c0392b; color: #fff; border: none; border-radius: 50px;
+      padding: .75rem 1.2rem; font-family: var(--fn-body); font-size: .9rem;
+      font-weight: 700; cursor: pointer; box-shadow: 0 4px 20px rgba(192,57,43,.4);
+      display: flex; align-items: center; gap: .45rem;
+      transition: transform .15s ease, box-shadow .15s ease;
+      letter-spacing: .03em;
+    }
+    #sos-btn:hover { transform: scale(1.06); box-shadow: 0 6px 28px rgba(192,57,43,.55); }
+    #sos-btn:active { transform: scale(.97); }
+
+    #sos-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.6);
+      z-index: 600; display: none; align-items: flex-end; justify-content: center;
+      padding: .75rem;
+    }
+    #sos-overlay.open { display: flex; }
+    @media (min-width: 560px) { #sos-overlay { align-items: center; } }
+
+    .sos-modal {
+      background: var(--surface); border-radius: var(--radius) var(--radius) 0 0;
+      width: 100%; max-width: 500px; max-height: 88dvh; overflow-y: auto;
+    }
+    @media (min-width: 560px) { .sos-modal { border-radius: var(--radius); } }
+
+    .sos-header {
+      background: #c0392b; color: #fff;
+      padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between;
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    @media (min-width: 560px) { .sos-header { border-radius: var(--radius) var(--radius) 0 0; } }
+    .sos-title { font-family: var(--fn-display); font-size: 1.2rem; font-weight: 700; }
+    .sos-close {
+      background: rgba(255,255,255,.2); border: none; color: #fff;
+      border-radius: 6px; padding: .4rem .7rem; cursor: pointer;
+      font-size: .85rem; font-family: var(--fn-body);
+    }
+    .sos-body { padding: 1rem 1.25rem 1.5rem; }
+
+    .sos-contact {
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: .9rem 1rem; margin-bottom: .6rem;
+    }
+    .sos-contact-name { font-weight: 600; font-size: .95rem; margin-bottom: .5rem; }
+    .sos-contact-row {
+      display: flex; align-items: center; gap: .6rem;
+      font-size: .83rem; color: var(--text-2); margin-top: .3rem;
+    }
+    .sos-link {
+      display: inline-flex; align-items: center; gap: .4rem;
+      color: var(--green); font-weight: 500; text-decoration: none;
+      background: var(--green-pale); border-radius: 6px;
+      padding: .3rem .7rem; font-size: .8rem;
+      transition: background var(--ease);
+    }
+    .sos-link:hover { background: var(--green-lt); color: #fff; }
+    .sos-link.call { background: #fee2e2; color: var(--red); }
+    .sos-link.call:hover { background: var(--red); color: #fff; }
+    .sos-section-label {
+      font-size: .72rem; font-weight: 700; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: .07em; margin: 1rem 0 .5rem;
+    }
+
+    /* ============================================================
+       EMERGENCY CONTACT ROWS (Profil)
+    ============================================================ */
+    .emg-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: .5rem;
+      align-items: start; margin-bottom: .5rem;
+      padding: .75rem; background: var(--surface-2);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+    }
+    .emg-row-full { grid-column: 1 / -1; }
+    .emg-row-del {
+      grid-column: 1 / -1; display: flex; justify-content: flex-end;
+    }
+
+    /* ============================================================
+       FOOD RATING
+    ============================================================ */
+    .star-row { display: flex; gap: .2rem; margin: .3rem 0; }
+    .star {
+      font-size: 1.25rem; cursor: pointer; transition: transform .1s ease;
+      opacity: .25; line-height: 1;
+    }
+    .star.on  { opacity: 1; }
+    .star:hover { transform: scale(1.2); }
+    .food-card-rating { display: flex; align-items: center; gap: .5rem; margin: .45rem 0 .2rem; }
+    .food-card-stars  { display: flex; gap: .1rem; font-size: 1rem; }
+    .food-card-star   { opacity: .2; }
+    .food-card-star.on{ opacity: 1; }
+    .food-detail-row  { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .4rem; }
+
+    /* ============================================================
+       CLAIM HELPER OVERLAY
+    ============================================================ */
+    #claim-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.55);
+      z-index: 700; display: none; align-items: flex-end; justify-content: center;
+      padding: .75rem;
+    }
+    #claim-overlay.open { display: flex; }
+    @media (min-width: 560px) { #claim-overlay { align-items: center; } }
+    .claim-modal {
+      background: var(--surface); border-radius: var(--radius) var(--radius) 0 0;
+      width: 100%; max-width: 500px; max-height: 92dvh; overflow-y: auto;
+    }
+    @media (min-width: 560px) { .claim-modal { border-radius: var(--radius); } }
+    .claim-header {
+      background: var(--green); color: #fff;
+      padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between;
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    .claim-title { font-family: var(--fn-display); font-size: 1.1rem; font-weight: 700; }
+    .claim-close {
+      background: rgba(255,255,255,.2); border: none; color: #fff;
+      border-radius: 6px; padding: .4rem .7rem; cursor: pointer;
+      font-size: .85rem; font-family: var(--fn-body);
+    }
+    .claim-body { padding: 1.1rem 1.25rem 1.5rem; }
+    .claim-step {
+      display: flex; align-items: flex-start; gap: .9rem;
+      padding: .85rem .95rem; border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border); background: var(--surface-2);
+      margin-bottom: .6rem;
+    }
+    .claim-step.done { border-color: var(--green-lt); background: var(--green-pale); }
+    .claim-step-num {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--green); color: #fff; font-size: .8rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .claim-step.done .claim-step-num { background: var(--green-mid); }
+    .claim-step-body { flex: 1; min-width: 0; }
+    .claim-step-title { font-weight: 600; font-size: .88rem; margin-bottom: .4rem; }
+    .claim-copy-row {
+      display: flex; align-items: center; gap: .5rem;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: .45rem .7rem;
+      margin-bottom: .3rem;
+    }
+    .claim-copy-val { flex: 1; font-size: .86rem; font-family: monospace; color: var(--text); }
+    .claim-copy-lbl { font-size: .68rem; color: var(--text-3); min-width: 90px; }
+    .copy-btn {
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 5px; padding: .28rem .55rem; cursor: pointer;
+      font-size: .74rem; font-family: var(--fn-body); color: var(--text-2);
+      transition: all var(--ease); white-space: nowrap; flex-shrink: 0;
+    }
+    .copy-btn:hover { background: var(--green-pale); color: var(--green); border-color: var(--green-lt); }
+    .copy-btn.copied { background: var(--green-pale); color: var(--green); border-color: var(--green-lt); }
+    .claim-divider { border: none; border-top: 1px solid var(--border); margin: .85rem 0; }
+    .claim-actions { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: 1rem; }
+
+    /* ============================================================
+       ERZIEHUNG
+    ============================================================ */
+    .train-topic-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); box-shadow: var(--shadow);
+      margin-bottom: .55rem; overflow: hidden;
+    }
+    .train-topic-hdr {
+      display: flex; align-items: center; gap: .7rem;
+      padding: .85rem 1.1rem; cursor: pointer; transition: background var(--ease);
+    }
+    .train-topic-hdr:hover { background: var(--surface-2); }
+    .train-topic-ico  { font-size: 1.3rem; flex-shrink: 0; }
+    .train-topic-name { font-weight: 600; font-size: .92rem; flex: 1; }
+    .train-topic-body {
+      display: none; border-top: 1px solid var(--border);
+      padding: .95rem 1.1rem;
+    }
+    .train-topic-body.open { display: block; }
+
+    .tt-goal {
+      background: var(--green-pale); border-left: 3px solid var(--green);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: .55rem .8rem; font-size: .82rem; color: var(--green); margin-bottom: .75rem;
+    }
+    .tt-phase {
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: .65rem .9rem; margin-bottom: .4rem;
+    }
+    .tt-phase-title { font-weight: 600; font-size: .82rem; color: var(--text-2); margin-bottom: .3rem; }
+    .tt-phase-text  { font-size: .8rem; color: var(--text); line-height: 1.6; }
+    .tt-tip {
+      background: var(--amber-pale); border-left: 3px solid var(--amber);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: .5rem .75rem; font-size: .79rem; color: #78350f; margin-top: .6rem;
+    }
+
+    /* Übungen */
+    .exercise-step {
+      display: flex; gap: .75rem; align-items: flex-start;
+      padding: .55rem 0; border-bottom: 1px solid var(--border);
+    }
+    .exercise-step:last-child { border-bottom: none; }
+    .exercise-step-num {
+      width: 22px; height: 22px; border-radius: 50%; background: var(--green);
+      color: #fff; font-size: .72rem; font-weight: 700; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; margin-top: .1rem;
+    }
+    .ex-diff {
+      font-size: .68rem; font-weight: 700; padding: .18rem .5rem;
+      border-radius: 20px; white-space: nowrap;
+    }
+    .diff-easy   { background: var(--green-pale);  color: var(--green); }
+    .diff-medium { background: var(--amber-pale);  color: #854d0e; }
+    .diff-hard   { background: var(--red-pale);    color: var(--red); }
+
+    .ex-link-row {
+      display: flex; align-items: center; gap: .5rem;
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: .4rem .7rem;
+      font-size: .8rem; margin-top: .3rem;
+    }
+    .ex-link-row a { color: var(--green); text-decoration: none; font-weight: 500; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ex-link-row a:hover { text-decoration: underline; }
+
+    /* Training-Log */
+    .log-stat-row {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: .5rem; margin-bottom: .85rem;
+    }
+    .log-stat {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: .7rem .6rem; text-align: center; box-shadow: var(--shadow);
+    }
+    .log-stat-val   { font-family: var(--fn-display); font-size: 1.15rem; font-weight: 700; color: var(--green); }
+    .log-stat-label { font-size: .67rem; color: var(--text-3); margin-top: .1rem; }
+    .session-mood   { font-size: 1.1rem; }
+
+    /* Steps editor */
+    .step-editor-row {
+      display: flex; gap: .4rem; align-items: flex-start; margin-bottom: .35rem;
+    }
+    .step-editor-row input {
+      flex: 1; padding: .45rem .65rem; border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm); font-family: var(--fn-body); font-size: .83rem;
+    }
+    .step-editor-row input:focus { outline: none; border-color: var(--green-mid); }
+    .step-del-btn {
+      background: var(--red-pale); border: none; border-radius: 6px;
+      color: var(--red); padding: .42rem .6rem; cursor: pointer; font-size: .78rem; flex-shrink: 0;
+    }
+    .link-editor-row {
+      display: grid; grid-template-columns: 1fr 1.5fr auto; gap: .4rem; margin-bottom: .35rem; align-items: start;
+    }
+    .link-editor-row input {
+      padding: .45rem .65rem; border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm); font-family: var(--fn-body); font-size: .82rem; width: 100%;
+    }
+    .link-editor-row input:focus { outline: none; border-color: var(--green-mid); }
+
+    /* ============================================================
+       KRANKHEITEN
+    ============================================================ */
+    .disease-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); box-shadow: var(--shadow);
+      margin-bottom: .6rem; overflow: hidden;
+    }
+    .disease-hdr {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .9rem 1.1rem; cursor: pointer;
+      transition: background var(--ease);
+    }
+    .disease-hdr:hover { background: var(--surface-2); }
+    .disease-ico  { font-size: 1.4rem; flex-shrink: 0; }
+    .disease-name { font-weight: 600; font-size: .93rem; flex: 1; }
+    .disease-sev  {
+      font-size: .68rem; font-weight: 700; padding: .2rem .55rem;
+      border-radius: 20px; white-space: nowrap;
+    }
+    .sev-high   { background: #fee2e2; color: #991b1b; }
+    .sev-medium { background: var(--amber-pale); color: #854d0e; }
+    .sev-low    { background: var(--green-pale); color: var(--green); }
+    .disease-chevron { font-size: .8rem; color: var(--text-3); transition: transform .2s ease; }
+    .disease-chevron.open { transform: rotate(180deg); }
+
+    .disease-body { display: none; border-top: 1px solid var(--border); padding: 1rem 1.1rem; }
+    .disease-body.open { display: block; }
+
+    .disease-section-lbl {
+      font-size: .7rem; font-weight: 700; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: .07em; margin: .9rem 0 .35rem;
+    }
+    .disease-section-lbl:first-child { margin-top: 0; }
+    .disease-text { font-size: .83rem; color: var(--text); line-height: 1.65; }
+    .disease-tags { display: flex; flex-wrap: wrap; gap: .35rem; margin: .4rem 0; }
+    .disease-tag  {
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 20px; padding: .18rem .55rem; font-size: .72rem; color: var(--text-2);
+    }
+    .disease-tag.red { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+    .disease-tag.amber { background: var(--amber-pale); border-color: #fcd34d; color: #854d0e; }
+    .disease-tag.green { background: var(--green-pale); border-color: var(--green-lt); color: var(--green); }
+
+    .disease-note-area {
+      margin-top: .9rem; padding-top: .9rem; border-top: 1px dashed var(--border);
+    }
+    .disease-note-area textarea {
+      width: 100%; min-height: 70px; padding: .5rem .7rem;
+      border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      font-family: var(--fn-body); font-size: .83rem; resize: vertical;
+      transition: border-color var(--ease);
+    }
+    .disease-note-area textarea:focus { outline: none; border-color: var(--green-mid); }
+
+    /* Krankenakte */
+    .krankenakte-card .photo-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(80px,1fr));
+      gap: .4rem; margin-top: .5rem;
+    }
+    .photo-thumb {
+      aspect-ratio: 1; border-radius: 6px; object-fit: cover;
+      border: 1px solid var(--border); cursor: pointer; width: 100%;
+    }
+    .photo-lightbox {
+      position: fixed; inset: 0; background: rgba(0,0,0,.88);
+      z-index: 800; display: flex; align-items: center; justify-content: center;
+      cursor: zoom-out;
+    }
+    .photo-lightbox img { max-width: 95vw; max-height: 92vh; border-radius: 8px; object-fit: contain; }
+    .lightbox-close {
+      position: fixed; top: 1rem; right: 1rem;
+      background: rgba(255,255,255,.2); color: #fff; border: none;
+      border-radius: 50%; width: 38px; height: 38px; font-size: 1.1rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ============================================================
+       RECEIPT / SUBMISSION
+    ============================================================ */
+    .receipt-box {
+      background: var(--surface-2); border: 1.5px dashed var(--border);
+      border-radius: var(--radius-sm); padding: .7rem .9rem; margin-top: .5rem;
+      display: flex; align-items: center; gap: .65rem; font-size: .8rem;
+    }
+    .receipt-box.has-file { border-color: var(--green-lt); background: var(--green-pale); }
+    .receipt-box.submitted { border-color: var(--green); }
+    .sub-status {
+      display: inline-flex; align-items: center; gap: .35rem;
+      font-size: .74rem; font-weight: 600; padding: .2rem .55rem;
+      border-radius: 20px;
+    }
+    .sub-status.pending  { background: var(--amber-pale); color: #854d0e; }
+    .sub-status.done     { background: var(--green-pale); color: var(--green); }
+
+    /* ============================================================
+       EMPTY STATE
+    ============================================================ */
+    .empty { text-align: center; padding: 2.5rem 1rem; color: var(--text-3); }
+    .empty-ico { font-size: 2.5rem; margin-bottom: .6rem; }
+    .empty-txt { font-size: .88rem; }
+
+    /* ============================================================
+       TOAST
+    ============================================================ */
+    #toast {
+      position: fixed; bottom: 1.4rem; left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--green); color: #fff;
+      padding: .65rem 1.1rem; border-radius: var(--radius-sm);
+      font-size: .84rem; z-index: 999; transition: transform .28s ease;
+      pointer-events: none; white-space: nowrap;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 440px) {
+      main { padding: .9rem; }
+      .stat-grid { gap: .45rem; }
+      .stat-val { font-size: 1.05rem; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════ -->
+<header>
+  <div class="hdr-brand">
+    <div class="hdr-paw">🐾</div>
+    <div>
+      <div class="hdr-name">Diva's Gesundheitsakte</div>
+      <div class="hdr-sub">Alaskan Klee Kai</div>
+    </div>
+  </div>
+  <div class="hdr-actions">
+    <button class="hdr-btn" onclick="exportJSON()" title="JSON exportieren">⬇ Export</button>
+    <button class="hdr-btn" onclick="triggerImport()" title="JSON importieren">⬆ Import</button>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)">
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════
+     TAB NAVIGATION
+══════════════════════════════════════════ -->
+<nav>
+  <div class="nav-inner">
+    <button class="nav-tab active" data-tab="dashboard">  <span class="ni">🏠</span> Übersicht</button>
+    <button class="nav-tab"        data-tab="profil">     <span class="ni">🐕</span> Profil</button>
+    <button class="nav-tab"        data-tab="impfungen">  <span class="ni">💉</span> Impfungen</button>
+    <button class="nav-tab"        data-tab="laefigkeit"> <span class="ni">🌸</span> Läufigkeit</button>
+    <button class="nav-tab"        data-tab="medikamente"><span class="ni">💊</span> Medikamente</button>
+    <button class="nav-tab"        data-tab="parasiten">  <span class="ni">🛡️</span> Parasiten</button>
+    <button class="nav-tab"        data-tab="gewicht">    <span class="ni">⚖️</span> Gewicht</button>
+    <button class="nav-tab"        data-tab="tierarzt">   <span class="ni">🏥</span> Tierarzt</button>
+    <button class="nav-tab"        data-tab="erinnerungen"><span class="ni">🔔</span> Erinnerungen</button>
+    <button class="nav-tab"        data-tab="fuetterung">  <span class="ni">🍖</span> Fütterung</button>
+    <button class="nav-tab"        data-tab="krankheiten"> <span class="ni">🩺</span> Krankheiten</button>
+    <button class="nav-tab"        data-tab="erziehung">   <span class="ni">🎓</span> Erziehung</button>
+  </div>
+</nav>
+
+<main>
+
+  <!-- ═══ DASHBOARD ═══════════════════════════════ -->
+  <section id="tab-dashboard" class="section active">
+    <div class="profile-banner">
+      <div class="avatar">🐺</div>
+      <div>
+        <div class="banner-name" id="d-name">Diva</div>
+        <div class="banner-breed" id="d-breed">Alaskan Klee Kai</div>
+      </div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-val" id="s-weight">— kg</div><div class="stat-label">Gewicht</div></div>
+      <div class="stat-card"><div class="stat-val" id="s-vacc">—</div><div class="stat-label">Nächste Impfung</div></div>
+      <div class="stat-card"><div class="stat-val" id="s-heat">—</div><div class="stat-label">Letzte Läufigkeit</div></div>
+    </div>
+    <div class="sec-hdr" style="margin-bottom:.7rem">
+      <div class="sec-title" style="font-size:1.05rem">Anstehende Termine</div>
+    </div>
+    <div id="upcoming"></div>
+  </section>
+
+  <!-- ═══ PROFIL ═══════════════════════════════════ -->
+  <section id="tab-profil" class="section">
+    <div class="sec-hdr">
+      <div><div class="sec-title">Profil</div><div class="sec-sub">Stammdaten · Kontakte · Fütterung</div></div>
+      <button class="btn btn-primary" onclick="saveProfile()">💾 Speichern</button>
+    </div>
+    <div class="profile-card">
+      <div class="profile-section-label">Grunddaten</div>
+      <div class="form-grid">
+        <div class="form-row">
+          <div class="fg"><label>Name</label><input id="p-name" value="Diva"></div>
+          <div class="fg"><label>Rasse</label><input id="p-breed" value="Alaskan Klee Kai"></div>
+        </div>
+        <div class="form-row">
+          <div class="fg"><label>Geburtsdatum</label><input type="date" id="p-bday"></div>
+          <div class="fg"><label>Geschlecht</label>
+            <select id="p-gender"><option value="female">Weiblich ♀</option><option value="male">Männlich ♂</option></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="fg"><label>Chip-Nr. (15-stellig)</label><input id="p-chip" placeholder="276..."></div>
+          <div class="fg"><label>EU-Passnummer</label><input id="p-pass" placeholder="AT..."></div>
+        </div>
+        <div class="fg"><label>Fellfarbe / Kennzeichen</label><input id="p-color" placeholder="z.B. schwarz-weiß-grau"></div>
+      </div>
+
+      <div class="profile-section-label">🏥 Tierarzt</div>
+      <div class="form-grid">
+        <div class="form-row">
+          <div class="fg"><label>Praxis / Name</label><input id="p-vet-name"></div>
+          <div class="fg"><label>Telefon</label><input type="tel" id="p-vet-phone"></div>
+        </div>
+        <div class="fg"><label>Adresse</label><input id="p-vet-addr"></div>
+        <div class="form-row">
+          <div class="fg"><label>E-Mail</label><input type="email" id="p-vet-email" placeholder="ordination@..."></div>
+          <div class="fg"><label>Website / Terminlink</label><input type="url" id="p-vet-web" placeholder="https://..."></div>
+        </div>
+      </div>
+
+      <div class="profile-section-label">🚨 Notfallkliniken</div>
+      <div id="emg-list"></div>
+      <button class="btn btn-secondary" style="margin-top:.4rem" onclick="addEmgContact()">+ Klinik hinzufügen</button>
+
+      <div class="profile-section-label">🛡️ Krankenversicherung</div>
+      <div class="form-grid">
+        <div class="form-row">
+          <div class="fg"><label>Versicherung / Anbieter</label><input id="p-ins-name" placeholder="z.B. Generali, Helvetia…"></div>
+          <div class="fg"><label>Versicherungsnummer</label><input id="p-ins-nr" placeholder="AT-…"></div>
+        </div>
+        <div class="form-row">
+          <div class="fg"><label>Einreich-E-Mail</label><input type="email" id="p-ins-email" placeholder="schaden@versicherung.at"></div>
+          <div class="fg"><label>Kundenportal-URL</label><input type="url" id="p-ins-url" placeholder="https://…"></div>
+        </div>
+      </div>
+
+      <div class="profile-section-label">📋 Notizen</div>
+      <div class="fg"><label>Allergien · Unverträglichkeiten · Besonderheiten</label><textarea id="p-notes"></textarea></div>
+    </div>
+  </section>
+
+  <!-- ═══ IMPFUNGEN ════════════════════════════════ -->
+  <section id="tab-impfungen" class="section">
+    <div class="sec-hdr">
+      <div><div class="sec-title">Impfungen</div><div class="sec-sub" id="vacc-sub">—</div></div>
+      <button class="btn btn-primary" onclick="openForm('vacc')">+ Eintrag</button>
+    </div>
+    <div id="vacc-list"></div>
+  </section>
+
+  <!-- ═══ LÄUFIGKEIT ═══════════════════════════════ -->
+  <section id="tab-laefigkeit" class="section">
+    <div class="sec-hdr">
+      <div><div class="sec-title">Läufigkeit</div><div class="sec-sub">Zyklusverlauf · Phasen · Prognose</div></div>
+      <button class="btn btn-primary" onclick="openForm('heat')">+ Zyklus</button>
+    </div>
+    <div id="heat-prog" style="display:none" class="card" style="border-left:3px solid var(--terra)">
+      <div style="font-weight:600;color:var(--terra);margin-bottom:.35rem">🌸 Prognose nächster Zyklus</div>
+      <div id="heat-prog-text" style="font-size:.84rem;color:var(--text-2)"></div>
+    </div>
+    <div id="heat-list"></div>
+  </section>
+
+  <!-- ═══ MEDIKAMENTE ══════════════════════════════ -->
+  <section id="tab-medikamente" class="section">
+    <div class="sec-hdr">
+      <div><div class="sec-title">Medikamente</div><div class="sec-sub" id="med-sub">—</div></div>
+      <button class="btn btn-primary" onclick="openForm('med')">+ Medikament</button>
+    </div>
+    <div class="toggle-row">
+      <button class="tog active" onclick="setMedFilter('active',this)">Aktiv</button>
+      <button class="tog" onclick="setMedFilter('all',this)">Alle</button>
+    </div>
+    <div id="med-list"></div>
+  </section>
+
+  <!-- ═══ PARASITEN ════════════════════════════════ -->
+  <section id="tab-parasiten" class="section">
+    <div class="sec-hdr">
+      <div><div class="sec-title">Parasitenschutz</div><div class="sec-sub">Flöhe · Zecken · Würmer</div></div>
+      <button class="btn btn-primary" onclick="openForm('parasite')">+ Eintrag</button>
+    </div>
+    <div id="para-list"></div>
+  </section>
+
+  <!-- ═══ GEWICHT ══════════════════════════════════ -->
+  <section id="tab-gewicht" class="section">
+    <div class="sec-hdr">
+      <div><div class="sec-title">Gewicht</div><div class="sec-sub" id="wt-sub">—</div></div>
+      <button class="btn btn-primary" onclick="openForm('weight')">+ Messung</button>
+    </div>
+    <div class="chart-box">
+      <div class="chart-label">Gewichtsverlauf (letzte 10 Messungen)</div>
+      <svg id="weightChart" viewBox="0 0 400 120" preserveAspectRatio="none"></svg>
+    </div>
+    <div id="wt-list"></div>
+  </section>
+
+  <!-- ═══ TIERARZT ══════════════════════════════════ -->
+  <section id="tab-tierarzt" class="section">
+    <div class="sec-hdr">
+      <div><div class="sec-title">Tierarztbesuche</div><div class="sec-sub" id="vet-sub">—</div></div>
+      <button class="btn btn-primary" onclick="openForm('vet')">+ Besuch</button>
+    </div>
+    <div id="vet-list"></div>
+  </section>
+
+  <!-- ═══ ERINNERUNGEN ══════════════════════════════ -->
+  <section id="tab-erinnerungen" class="section">
+    <div class="sec-hdr">
+      <div><div class="sec-title">Erinnerungen</div><div class="sec-sub" id="rem-sub">—</div></div>
+      <div style="display:flex;gap:.4rem">
+        <button class="btn btn-secondary" onclick="exportIcal()">📅 iCal</button>
+        <button class="btn btn-primary" onclick="openForm('reminder')">+ Erinnerung</button>
+      </div>
+    </div>
+    <div id="rem-list"></div>
+  </section>
+
+  <!-- ═══ FÜTTERUNG ═══════════════════════════════ -->
+  <section id="tab-fuetterung" class="section">
+    <div class="sec-hdr">
+      <div><div class="sec-title">Fütterung</div><div class="sec-sub" id="food-sub">—</div></div>
+      <button class="btn btn-primary" id="food-add-btn" onclick="openFoodForm()">+ Eintrag</button>
+    </div>
+    <div class="toggle-row" id="food-toggle">
+      <button class="tog active" onclick="setFoodView('food',this)">🥩 Hauptfutter</button>
+      <button class="tog"        onclick="setFoodView('treat',this)">🦴 Belohnung</button>
+    </div>
+    <div id="food-list"></div>
+  </section>
+
+  <!-- ═══ KRANKHEITEN ══════════════════════════════ -->
+  <section id="tab-krankheiten" class="section">
+    <div class="sec-hdr">
+      <div><div class="sec-title">Krankheiten</div><div class="sec-sub" id="dis-sub">Wissensdatenbank · Krankenakte</div></div>
+      <button class="btn btn-primary" id="dis-add-btn" onclick="openDiseaseRecord()">+ Eintrag</button>
+    </div>
+    <div class="toggle-row" id="dis-toggle">
+      <button class="tog active" onclick="setDisView('db',this)">📚 Wissensdatenbank</button>
+      <button class="tog"        onclick="setDisView('akte',this)">📋 Divas Krankenakte</button>
+    </div>
+    <div id="dis-list"></div>
+  </section>
+
+  <!-- ═══ ERZIEHUNG ═══════════════════════════════ -->
+  <section id="tab-erziehung" class="section">
+    <div class="sec-hdr">
+      <div><div class="sec-title">Erziehung</div><div class="sec-sub" id="train-sub">—</div></div>
+      <button class="btn btn-primary" id="train-add-btn" onclick="openTrainingForm()">+ Eintrag</button>
+    </div>
+    <div class="toggle-row" id="train-toggle">
+      <button class="tog active" onclick="setTrainView('topics',this)">📚 Themen</button>
+      <button class="tog"        onclick="setTrainView('exercises',this)">🎯 Übungen</button>
+      <button class="tog"        onclick="setTrainView('log',this)">📊 Training-Log</button>
+      <button class="tog"        onclick="setTrainView('docs',this)">📄 Dokumente</button>
+    </div>
+    <div id="train-list"></div>
+  </section>
+
+</main>
+
+<!-- ══════════════════════════════════════════
+     CLAIM HELPER OVERLAY
+══════════════════════════════════════════ -->
+<div id="claim-overlay">
+  <div class="claim-modal">
+    <div class="claim-header">
+      <div class="claim-title">📤 Schaden einreichen</div>
+      <button class="claim-close" onclick="closeClaimHelper()">✕</button>
+    </div>
+    <div class="claim-body" id="claim-body"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SOS BUTTON & OVERLAY
+══════════════════════════════════════════ -->
+<button id="sos-btn" onclick="showSOS()">🚨 Notfall</button>
+
+<div id="sos-overlay" onclick="sosBgClose(event)">
+  <div class="sos-modal">
+    <div class="sos-header">
+      <div class="sos-title">🚨 Notfallkontakte</div>
+      <button class="sos-close" onclick="closeSOS()">✕ Schließen</button>
+    </div>
+    <div class="sos-body" id="sos-body">
+      <div style="text-align:center;padding:2rem;color:var(--text-3)">Keine Kontakte hinterlegt.<br>Bitte im Profil ergänzen.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     FORM OVERLAY
+══════════════════════════════════════════ -->
+<div id="overlay" class="overlay" style="display:none" onclick="bgClose(event)">
+  <div class="modal" id="modal-body"></div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ================================================================
+//  DATA MODEL
+// ================================================================
+const KEY = 'diva-v2';
+const DEF = {
+  profile: { name:'Diva', breed:'Alaskan Klee Kai', bday:'', gender:'female',
+             chip:'', pass:'', color:'',
+             vet:{ name:'', phone:'', addr:'', email:'', web:'' },
+             emergencyContacts:[],
+             ins:{ name:'', nr:'', email:'', url:'' },
+             notes:'' },
+  vaccinations:[], heatCycles:[], medications:[],
+  parasites:[], weights:[], vetVisits:[], reminders:[],
+  foods:[], treats:[],
+  diseaseNotes:{},
+  healthRecords:[],
+  trainingTopicNotes:{},
+  exercises:[],
+  trainingSessions:[],
+  trainingDocs:[]
+};
+
+let D = (() => {
+  try {
+    const s = localStorage.getItem(KEY);
+    if(s) {
+      const parsed = JSON.parse(s);
+      const merged = {...DEF, ...parsed};
+      // Alle Array-Felder absichern (falls ältere Datenstände fehlen)
+      ['vaccinations','heatCycles','medications','parasites','weights','vetVisits','reminders','foods','treats'].forEach(k => {
+        if(!Array.isArray(merged[k])) merged[k] = [];
+      });
+      if(!Array.isArray(merged.profile?.emergencyContacts)) {
+        merged.profile = {...merged.profile, emergencyContacts:[]};
+      }
+      return merged;
+    }
+  } catch(e){}
+  return JSON.parse(JSON.stringify(DEF));
+})();
+
+const save = () => localStorage.setItem(KEY, JSON.stringify(D));
+const uid  = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+
+// ================================================================
+//  UTILITIES
+// ================================================================
+const toDE = d => { if(!d) return '—'; const [y,m,day]=d.split('-'); return `${day}.${m}.${y}`; };
+const today = () => new Date().toISOString().slice(0,10);
+const daysAway = d => { if(!d) return null; const ms = new Date(d+'T00:00:00') - new Date(new Date().toDateString()); return Math.round(ms/864e5); };
+const addDays = (d,n) => { const x=new Date(d+'T00:00:00'); x.setDate(x.getDate()+n); return x.toISOString().slice(0,10); };
+const addMonths = (d,n) => { const x=new Date(d+'T00:00:00'); x.setMonth(x.getMonth()+n); return x.toISOString().slice(0,10); };
+const age = bd => {
+  if(!bd) return '';
+  const b=new Date(bd+'T00:00:00'), now=new Date();
+  let y=now.getFullYear()-b.getFullYear(), m=now.getMonth()-b.getMonth();
+  if(m<0){y--;m+=12;}
+  return y>0 ? `${y} J. ${m>0?m+' Mon.':''}` : `${m} Mon.`;
+};
+const badge = d => {
+  if(d===null) return '';
+  if(d<0)  return `<span class="badge badge-urgent">Überfällig</span>`;
+  if(d===0) return `<span class="badge badge-urgent">Heute</span>`;
+  if(d<=14) return `<span class="badge badge-urgent">${d}d</span>`;
+  if(d<=60) return `<span class="badge badge-soon">${d}d</span>`;
+  return `<span class="badge badge-ok">${d}d</span>`;
+};
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const empty = (ic,tx) => `<div class="empty"><div class="empty-ico">${ic}</div><div class="empty-txt">${tx}</div></div>`;
+
+// ================================================================
+//  NAVIGATION
+// ================================================================
+const RENDER = {
+  dashboard:   renderDash,
+  profil:      loadProfil,
+  impfungen:   renderVacc,
+  laefigkeit:  renderHeat,
+  medikamente: renderMeds,
+  parasiten:   renderPara,
+  gewicht:     renderWeight,
+  tierarzt:    renderVet,
+  erinnerungen:renderRem,
+  fuetterung:  renderFood,
+  krankheiten: renderDisease,
+  erziehung:   renderTraining
+};
+
+document.querySelectorAll('.nav-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-'+tab).classList.add('active');
+    btn.classList.add('active');
+    RENDER[tab]?.();
+  });
+});
+
+// ================================================================
+//  DASHBOARD
+// ================================================================
+function renderDash() {
+  document.getElementById('d-name').textContent = D.profile.name || 'Diva';
+  document.getElementById('d-breed').textContent =
+    (D.profile.breed || 'Alaskan Klee Kai') + (D.profile.bday ? ' · ' + age(D.profile.bday) : '');
+
+  const ws = [...D.weights].sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById('s-weight').textContent = ws.length ? ws[0].weight+' kg' : '—';
+
+  const nv = D.vaccinations.filter(v=>v.nextDate).sort((a,b)=>a.nextDate.localeCompare(b.nextDate))[0];
+  document.getElementById('s-vacc').textContent = nv ? toDE(nv.nextDate) : '—';
+
+  const hs = [...D.heatCycles].sort((a,b)=>b.startDate.localeCompare(a.startDate));
+  document.getElementById('s-heat').textContent = hs.length ? toDE(hs[0].startDate) : '—';
+
+  // Upcoming
+  const supersededIds = calcSupersededIds(D.vaccinations);
+
+  let evs = [];
+  D.vaccinations.filter(v=>v.nextDate && !supersededIds.has(v.id)).forEach(v=>
+    evs.push({ic:'💉', title:'Impfung: '+esc(v.name), date:v.nextDate, d:daysAway(v.nextDate)}));
+  D.parasites.filter(p=>p.nextDate).forEach(p=>{
+    const lbl = {flea:'Flohschutz',tick:'Zeckenschutz',worm:'Entwurmung'}[p.type]||p.type;
+    evs.push({ic:'🛡️', title:lbl+': '+esc(p.product), date:p.nextDate, d:daysAway(p.nextDate)});
+  });
+  D.reminders.filter(r=>!r.done&&r.date).forEach(r=>
+    evs.push({ic:'🔔', title:esc(r.title), date:r.date, d:daysAway(r.date)}));
+  D.medications.filter(m=>m.active&&m.refillDate).forEach(m=>
+    evs.push({ic:'💊', title:'Nachfüllen: '+esc(m.name), date:m.refillDate, d:daysAway(m.refillDate)}));
+
+  evs.sort((a,b)=>(a.d??9999)-(b.d??9999));
+  const el = document.getElementById('upcoming');
+  if(!evs.length) {
+    el.innerHTML = empty('📅','Noch keine anstehenden Termine.<br>Füge Einträge in den anderen Tabs hinzu.');
+    return;
+  }
+  el.innerHTML = evs.slice(0,8).map(e=>`
+    <div class="up-item">
+      <span class="up-icon">${e.ic}</span>
+      <div class="up-info">
+        <div class="up-title">${e.title}</div>
+        <div class="up-date">${toDE(e.date)}</div>
+      </div>
+      ${badge(e.d)}
+    </div>`).join('');
+}
+
+// ================================================================
+//  PROFIL
+// ================================================================
+function loadProfil() {
+  const p = D.profile;
+  const set = (id, val) => { const el=document.getElementById(id); if(el) el.value=val||''; };
+  set('p-name', p.name); set('p-breed', p.breed); set('p-bday', p.bday);
+  set('p-chip', p.chip); set('p-pass', p.pass); set('p-color', p.color);
+  set('p-vet-name', p.vet?.name); set('p-vet-phone', p.vet?.phone);
+  set('p-vet-addr', p.vet?.addr); set('p-vet-email', p.vet?.email);
+  set('p-vet-web',  p.vet?.web);
+  set('p-ins-name', p.ins?.name); set('p-ins-nr', p.ins?.nr);
+  set('p-ins-email', p.ins?.email); set('p-ins-url', p.ins?.url);
+  set('p-notes', p.notes);
+  document.getElementById('p-gender').value = p.gender || 'female';
+  renderEmgList();
+}
+
+function renderEmgList() {
+  const contacts = D.profile.emergencyContacts || [];
+  const el = document.getElementById('emg-list');
+  if(!el) return;
+  if(!contacts.length) {
+    el.innerHTML = `<div style="font-size:.82rem;color:var(--text-3);padding:.5rem 0">Noch keine Notfallklinik hinterlegt.</div>`;
+    return;
+  }
+  el.innerHTML = contacts.map((c,i) => `
+    <div class="emg-row">
+      <div class="fg"><label>Name / Klinik</label>
+        <input type="text" value="${esc(c.name)}" oninput="updateEmg(${i},'name',this.value)" placeholder="Tierklinik Wien…"></div>
+      <div class="fg"><label>Notfallnummer</label>
+        <input type="tel"  value="${esc(c.phone)}" oninput="updateEmg(${i},'phone',this.value)" placeholder="+43…"></div>
+      <div class="fg emg-row-full"><label>Website</label>
+        <input type="url"  value="${esc(c.website||'')}" oninput="updateEmg(${i},'website',this.value)" placeholder="https://…"></div>
+      <div class="emg-row-del">
+        <button class="btn btn-danger btn-sm" onclick="removeEmgContact(${i})">🗑 Entfernen</button>
+      </div>
+    </div>`).join('');
+}
+
+function addEmgContact() {
+  if(!D.profile.emergencyContacts) D.profile.emergencyContacts = [];
+  D.profile.emergencyContacts.push({ name:'', phone:'', website:'' });
+  renderEmgList();
+}
+
+function removeEmgContact(i) {
+  D.profile.emergencyContacts.splice(i, 1);
+  renderEmgList();
+}
+
+function updateEmg(i, field, val) {
+  if(D.profile.emergencyContacts?.[i]) D.profile.emergencyContacts[i][field] = val;
+}
+
+function saveProfile() {
+  const g = id => document.getElementById(id)?.value || '';
+  // Sync live-edited emergency contacts (already in D.profile.emergencyContacts via oninput)
+  D.profile = {
+    ...D.profile,
+    name:g('p-name'), breed:g('p-breed'), bday:g('p-bday'), gender:g('p-gender'),
+    chip:g('p-chip'), pass:g('p-pass'), color:g('p-color'),
+    vet:{ name:g('p-vet-name'), phone:g('p-vet-phone'), addr:g('p-vet-addr'),
+          email:g('p-vet-email'), web:g('p-vet-web') },
+    ins:{ name:g('p-ins-name'), nr:g('p-ins-nr'), email:g('p-ins-email'), url:g('p-ins-url') },
+    notes:g('p-notes')
+  };
+  save(); toast('✓ Profil gespeichert');
+}
+
+// ================================================================
+//  SOS OVERLAY
+// ================================================================
+function showSOS() {
+  const p = D.profile;
+  const contacts = p.emergencyContacts || [];
+  const vet = p.vet || {};
+  let html = '';
+
+  // Emergency contacts
+  if(contacts.length) {
+    html += `<div class="sos-section-label">🚨 Notfallkliniken</div>`;
+    html += contacts.map(c => `
+      <div class="sos-contact">
+        <div class="sos-contact-name">${esc(c.name||'Klinik')}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.4rem">
+          ${c.phone?`<a class="sos-link call" href="tel:${esc(c.phone)}">📞 ${esc(c.phone)}</a>`:''}
+          ${c.website?`<a class="sos-link" href="${esc(c.website)}" target="_blank" rel="noopener">🌐 Website</a>`:''}
+        </div>
+      </div>`).join('');
+  }
+
+  // Regular vet
+  if(vet.name) {
+    html += `<div class="sos-section-label">🏥 Tierarzt / Praxis</div>
+      <div class="sos-contact">
+        <div class="sos-contact-name">${esc(vet.name)}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.4rem">
+          ${vet.phone?`<a class="sos-link call" href="tel:${esc(vet.phone)}">📞 ${esc(vet.phone)}</a>`:''}
+          ${vet.email?`<a class="sos-link" href="mailto:${esc(vet.email)}">✉️ ${esc(vet.email)}</a>`:''}
+          ${vet.web?`<a class="sos-link" href="${esc(vet.web)}" target="_blank" rel="noopener">🌐 Termin</a>`:''}
+        </div>
+        ${vet.addr?`<div class="sos-contact-row">📍 ${esc(vet.addr)}</div>`:''}
+      </div>`;
+  }
+
+  if(!html) {
+    html = `<div style="text-align:center;padding:2rem;color:var(--text-3)">
+      Keine Kontakte hinterlegt.<br>
+      <button class="btn btn-primary" style="margin-top:.75rem" onclick="closeSOS();goTab('profil')">Zum Profil</button>
+    </div>`;
+  }
+
+  document.getElementById('sos-body').innerHTML = html;
+  document.getElementById('sos-overlay').classList.add('open');
+}
+
+function closeSOS() {
+  document.getElementById('sos-overlay').classList.remove('open');
+}
+
+function sosBgClose(e) {
+  if(e.target.id==='sos-overlay') closeSOS();
+}
+
+
+//  VACCINATIONS
+// ================================================================
+
+// Jede Impfstoff-Option bekommt ein Set an Indikations-Tags.
+// A wird von B abgelöst wenn B ALLE Indikationen von A abdeckt und neuer ist.
+const VACC_INDICATIONS = (() => {
+  const m = new Map();
+  const set = (tags, ...names) => names.forEach(n => m.set(n, new Set(tags)));
+
+  // DHPPi-Kombinationen
+  set(['dhppi'],
+    'Nobivac DHPPi (MSD) – Staupe, Parvo, Hepatitis, Parainfluenza',
+    'Nobivac Puppy DP (MSD) – Staupe, Parvo (Welpen)',
+    'Eurican DHPPI2 (Boehringer) – Staupe, Parvo, Hepatitis, Parainfluenza',
+    'Canigen DHPPi (Virbac) – Staupe, Parvo, Hepatitis, Parainfluenza'
+  );
+  set(['dhppi','lepto'],
+    'Nobivac DHPPi + L4 (MSD) – Kern + Leptospirose 4 Serovare',
+    'Nobivac DHPPi + Lepto (MSD) – Kern + Leptospirose 2 Serovare',
+    'Canigen DHPPi/L (Virbac) – Kern + Leptospirose',
+    'Versican Plus DHPPiLR (Zoetis) – Kern + Leptospirose'
+  );
+  set(['dhppi','tollwut'],
+    'Nobivac DHPPi + Rabies (MSD) – Kern + Tollwut'
+  );
+  set(['dhppi','lepto','tollwut'],
+    'Nobivac DHPPi + L4 + Rabies (MSD) – Kern + Lepto + Tollwut',
+    'Eurican DHPPI2-L + Rabisin (Boehringer) – Kern + Lepto + Tollwut'
+  );
+
+  // Tollwut monovalent
+  set(['tollwut'],
+    'Nobivac Rabies (MSD)',
+    'Rabisin (Boehringer)',
+    'Versiguard Rabies (Zoetis)',
+    'Rabigen Mono (Virbac)'
+  );
+
+  // Leptospirose monovalent
+  set(['lepto'],
+    'Nobivac L4 (MSD) – 4 Serovare',
+    'Nobivac Lepto (MSD) – 2 Serovare',
+    'Canigen L (Virbac)',
+    'Versican Plus L4 (Zoetis)'
+  );
+
+  // Zwingerhusten / Bordetella
+  set(['bordetella'],
+    'Nobivac KC (MSD) – intranasal, Bordetella + Parainfluenza',
+    'Bronchi-Shield III (Zoetis) – intranasal',
+    'Canigen BB (Virbac) – oral'
+  );
+
+  // Situative
+  set(['borreliose'], 'Merilym 3 – Borreliose / Lyme (Boehringer)');
+  set(['leishmaniose'],
+    'CaniLeish (Virbac) – Leishmaniose',
+    'Letifend (Leti) – Leishmaniose'
+  );
+
+  return m;
+})();
+
+// Gibt Indikations-Set für einen Impfstoffnamen zurück.
+// Für Freitext-Impfstoffe: leeres Set (keine Auto-Ablösung).
+function vaccIndications(name) {
+  return VACC_INDICATIONS.get(name) || new Set();
+}
+
+// Gibt true zurück wenn newerIndications ALLE Tags von olderIndications enthält
+// und mindestens eine Indikation gemeinsam ist (kein leeres Set).
+function vaccSupersedes(newerName, olderName) {
+  const older = vaccIndications(olderName);
+  const newer = vaccIndications(newerName);
+  if(older.size === 0 || newer.size === 0) return false;
+  for(const tag of older) { if(!newer.has(tag)) return false; }
+  return true;
+}
+
+// Berechnet Set von abgelösten Impfungs-IDs
+function calcSupersededIds(vaccinations) {
+  const ids = new Set();
+  vaccinations.forEach(v => {
+    vaccinations.forEach(newer => {
+      if(newer.id !== v.id && newer.date > v.date && vaccSupersedes(newer.name, v.name))
+        ids.add(v.id);
+    });
+  });
+  return ids;
+}
+
+function renderVacc() {
+  if(!Array.isArray(D.vaccinations)) D.vaccinations = [];
+  const sorted = [...D.vaccinations].sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById('vacc-sub').textContent = sorted.length + ' Einträge';
+  const el = document.getElementById('vacc-list');
+  if(!sorted.length) { el.innerHTML = empty('💉','Noch keine Impfungen eingetragen.'); return; }
+
+  const superseded = calcSupersededIds(D.vaccinations);
+
+  el.innerHTML = sorted.map(v => {
+    const isSuperseded = superseded.has(v.id);
+    // Wenn abgelöst: kein nextDate-Chip, kein Badge, kein Erinnerungshinweis
+    const d = (!isSuperseded && v.nextDate) ? daysAway(v.nextDate) : null;
+    const overdue = d !== null && d < 0;
+    return `<div class="card" style="${overdue?'border-color:#fca5a5':isSuperseded?'opacity:.55':''}">
+      <div class="card-hdr">
+        <div>
+          <div class="card-title">${esc(v.name)}</div>
+          <div class="card-sub">Geimpft: ${toDE(v.date)}${v.vet?' · '+esc(v.vet):''}</div>
+        </div>
+        <div class="card-acts">
+          ${isSuperseded?`<span class="chip gray" style="font-size:.68rem">abgelöst</span>`:''}
+          <button class="btn btn-secondary btn-sm" onclick="editEntry('vacc','${v.id}')">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="delEntry('vacc','${v.id}')">🗑</button>
+        </div>
+      </div>
+      <div class="card-meta">
+        ${!isSuperseded && v.nextDate ? `<span class="chip ${overdue?'red':d<=60?'amber':''}">Fällig: ${toDE(v.nextDate)}</span>` : ''}
+        ${isSuperseded ? `<span class="chip gray" style="font-size:.7rem">Auffrischung erfolgt</span>` : ''}
+        ${v.batch?`<span class="chip gray">Charge: ${esc(v.batch)}</span>`:''}
+        ${!isSuperseded ? badge(d) : ''}
+      </div>
+      ${v.notes?`<div style="font-size:.78rem;color:var(--text-2);margin-top:.45rem">${esc(v.notes)}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+// ================================================================
+//  HEAT CYCLES
+// ================================================================
+function renderHeat() {
+  const sorted = [...D.heatCycles].sort((a,b)=>b.startDate.localeCompare(a.startDate));
+  const prog = document.getElementById('heat-prog');
+
+  if(sorted.length) {
+    const last = sorted[0];
+    const nextEst = addMonths(last.startDate, 6);
+    const d = daysAway(nextEst);
+    prog.style.display = 'block';
+    document.getElementById('heat-prog-text').innerHTML =
+      `Nächste Läufigkeit geschätzt: <strong>${toDE(nextEst)}</strong> &nbsp;` +
+      (d>0?`(in ${d} Tagen)`:`(bereits überfällig)`) +
+      `<br><span style="font-size:.74rem;opacity:.75">Basis: ${toDE(last.startDate)} + 6 Monate Durchschnitt</span>`;
+  } else { prog.style.display='none'; }
+
+  const el = document.getElementById('heat-list');
+  if(!sorted.length) { el.innerHTML = empty('🌸','Noch keine Läufigkeiten eingetragen.'); return; }
+  el.innerHTML = sorted.map(h=>{
+    const p1 = addDays(h.startDate,9);
+    const p2 = addDays(h.startDate,18);
+    const p3 = addDays(h.startDate,80);
+    return `<div class="card">
+      <div class="card-hdr">
+        <div>
+          <div class="card-title">Läufigkeit ab ${toDE(h.startDate)}</div>
+          <div class="card-sub">${h.endDate?'Ende: '+toDE(h.endDate):'Verlauf dokumentiert'}</div>
+        </div>
+        <div class="card-acts">
+          <button class="btn btn-secondary btn-sm" onclick="editEntry('heat','${h.id}')">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="delEntry('heat','${h.id}')">🗑</button>
+        </div>
+      </div>
+      <div class="phase-bar">
+        <div class="ph ph-pro" style="flex:9" title="Proöstrus ~9d">Pro</div>
+        <div class="ph ph-est" style="flex:9" title="Östrus (fruchtbar) ~9d">Öst</div>
+        <div class="ph ph-die" style="flex:62" title="Diöstrus ~62d">Diöstrus</div>
+      </div>
+      <div class="phase-legend">
+        <span>🩷 Proöstrus ${toDE(h.startDate)}–${toDE(p1)}</span>
+        <span>🔴 Östrus ${toDE(p1)}–${toDE(p2)}</span>
+        <span>🟣 Diöstrus ${toDE(p2)}–${toDE(p3)}</span>
+      </div>
+      ${h.notes?`<div style="font-size:.78rem;color:var(--text-2);margin-top:.5rem">${esc(h.notes)}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+// ================================================================
+//  MEDICATIONS
+// ================================================================
+let medFilter = 'active';
+function setMedFilter(f, btn) {
+  medFilter = f;
+  document.querySelectorAll('.tog').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMeds();
+}
+function renderMeds() {
+  let meds = [...D.medications].sort((a,b)=>b.startDate.localeCompare(a.startDate));
+  const active = meds.filter(m=>m.active).length;
+  document.getElementById('med-sub').textContent = `${active} aktiv · ${meds.length} gesamt`;
+  if(medFilter==='active') meds = meds.filter(m=>m.active);
+  const el = document.getElementById('med-list');
+  if(!meds.length) { el.innerHTML = empty('💊', medFilter==='active'?'Keine aktiven Medikamente.':'Noch keine Medikamente eingetragen.'); return; }
+  el.innerHTML = meds.map(m=>`
+    <div class="card">
+      <div class="card-hdr">
+        <div>
+          <div class="card-title">${esc(m.name)} ${m.active?'<span style="color:var(--green-mid);font-size:.7rem;font-weight:700">● AKTIV</span>':''}</div>
+          <div class="card-sub">${m.dose?esc(m.dose)+(m.unit?' '+esc(m.unit):''):''} ${m.frequency?'· '+esc(m.frequency):''}</div>
+        </div>
+        <div class="card-acts">
+          <button class="btn btn-secondary btn-sm" onclick="editEntry('med','${m.id}')">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="delEntry('med','${m.id}')">🗑</button>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="chip gray">Ab ${toDE(m.startDate)}</span>
+        ${m.endDate?`<span class="chip gray">Bis ${toDE(m.endDate)}</span>`:''}
+        ${m.reason?`<span class="chip">${esc(m.reason)}</span>`:''}
+      </div>
+      ${m.notes?`<div style="font-size:.78rem;color:var(--text-2);margin-top:.45rem">${esc(m.notes)}</div>`:''}
+    </div>`).join('');
+}
+
+// ================================================================
+//  PARASITES
+// ================================================================
+function renderPara() {
+  if(!Array.isArray(D.parasites)) D.parasites = [];
+  const sorted = [...D.parasites].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  const el = document.getElementById('para-list');
+  if(!sorted.length) { el.innerHTML = empty('🛡️','Noch keine Parasitenbehandlungen eingetragen.'); return; }
+  const TL = {
+    'spot-on':'🐱 Spot-on (Flöhe & Läuse)',
+    'flea':   '🐱 Spot-on (Flöhe & Läuse)', // Rückwärtskompatibilität
+    'tick':   '🕷️ Zeckenschutz',
+    'worm':   '🐛 Entwurmung',
+    'combo':  '🛡️ Kombipräparat'
+  };
+  el.innerHTML = sorted.map(p=>{
+    const d = p.nextDate ? daysAway(p.nextDate) : null;
+    return `<div class="card">
+      <div class="card-hdr">
+        <div>
+          <div class="card-title">${TL[p.type]||p.type}: ${esc(p.product)}</div>
+          <div class="card-sub">Gegeben: ${toDE(p.date)}</div>
+        </div>
+        <div class="card-acts">
+          <button class="btn btn-secondary btn-sm" onclick="editEntry('parasite','${p.id}')">✏️</button>
+          <button class="btn btn-danger btn-sm" data-type="parasite" data-id="${p.id}" onclick="delEntry(this.dataset.type,this.dataset.id)">🗑</button>
+        </div>
+      </div>
+      <div class="card-meta">
+        ${p.nextDate?`<span class="chip ${d!==null&&d<=14?'red':d!==null&&d<=60?'amber':''}">Nächste: ${toDE(p.nextDate)}</span>`:''}
+        ${badge(d)}
+      </div>
+      ${p.notes?`<div style="font-size:.78rem;color:var(--text-2);margin-top:.45rem">${esc(p.notes)}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+// ================================================================
+//  WEIGHT
+// ================================================================
+function renderWeight() {
+  const sorted = [...D.weights].sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById('wt-sub').textContent = sorted.length
+    ? `Aktuell: ${sorted[0].weight} kg (${toDE(sorted[0].date)})`
+    : 'Noch kein Eintrag';
+  drawChart(sorted.slice(0,10).reverse());
+  const el = document.getElementById('wt-list');
+  if(!sorted.length) { el.innerHTML = empty('⚖️','Noch keine Gewichtsmessungen.'); return; }
+  el.innerHTML = sorted.map(w=>`
+    <div class="card" style="padding:.7rem 1.1rem">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <span style="font-weight:600;font-size:.98rem">${w.weight} kg</span>
+          <span style="font-size:.78rem;color:var(--text-2);margin-left:.65rem">${toDE(w.date)}</span>
+          ${w.notes?`<span style="font-size:.74rem;color:var(--text-3);margin-left:.45rem">— ${esc(w.notes)}</span>`:''}
+        </div>
+        <div style="display:flex;gap:.35rem">
+          <button class="btn btn-secondary btn-sm" onclick="editEntry('weight','${w.id}')">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="delEntry('weight','${w.id}')">🗑</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function drawChart(entries) {
+  const svg = document.getElementById('weightChart');
+  if(!entries.length) {
+    svg.innerHTML = '<text x="200" y="65" text-anchor="middle" fill="#a09890" font-size="13" font-family="DM Sans,sans-serif">Noch keine Daten</text>';
+    return;
+  }
+  const W=400,H=120,pt={t:14,b:24,l:34,r:12};
+  const ws = entries.map(e=>parseFloat(e.weight));
+  const mn=Math.min(...ws)-.25, mx=Math.max(...ws)+.25;
+  const n=entries.length;
+  const px = i => pt.l + (i/Math.max(n-1,1))*(W-pt.l-pt.r);
+  const py = w => pt.t + (1-(w-mn)/(mx-mn))*(H-pt.t-pt.b);
+  const pts = entries.map((e,i)=>`${px(i).toFixed(1)},${py(parseFloat(e.weight)).toFixed(1)}`);
+  const path = pts.map((p,i)=>(i?'L':'M')+p).join(' ');
+  const area = path+` L${px(n-1).toFixed(1)},${(H-pt.b).toFixed(1)} L${pt.l},${(H-pt.b).toFixed(1)} Z`;
+  const mid = ((mn+mx)/2).toFixed(1);
+  svg.innerHTML = `
+    <defs><linearGradient id="wg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#40916c" stop-opacity=".28"/>
+      <stop offset="100%" stop-color="#40916c" stop-opacity=".02"/>
+    </linearGradient></defs>
+    <line x1="${pt.l}" y1="${pt.t}" x2="${pt.l}" y2="${H-pt.b}" stroke="#e5e0d8" stroke-width="1"/>
+    <line x1="${pt.l}" y1="${H-pt.b}" x2="${W-pt.r}" y2="${H-pt.b}" stroke="#e5e0d8" stroke-width="1"/>
+    ${[[mx,py(mx)],[parseFloat(mid),py(parseFloat(mid))],[mn,py(mn)]].map(([v,y])=>
+      `<text x="${pt.l-4}" y="${(y+4).toFixed(1)}" text-anchor="end" fill="#a09890" font-size="9" font-family="DM Sans,sans-serif">${v.toFixed(2)}</text>`
+    ).join('')}
+    <path d="${area}" fill="url(#wg)"/>
+    <path d="${path}" fill="none" stroke="#2d6a4f" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+    ${entries.map((e,i)=>`
+      <circle cx="${px(i).toFixed(1)}" cy="${py(parseFloat(e.weight)).toFixed(1)}" r="3.5" fill="#2d6a4f"/>
+      ${(i%Math.ceil(n/5)===0||i===n-1)?`<text x="${px(i).toFixed(1)}" y="${H-pt.b+12}" text-anchor="middle" fill="#a09890" font-size="8" font-family="DM Sans,sans-serif">${e.date.slice(5)}</text>`:''}`).join('')}`;
+}
+
+// ================================================================
+//  VET VISITS
+// ================================================================
+function renderVet() {
+  const sorted = [...D.vetVisits].sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById('vet-sub').textContent = sorted.length + ' Besuche';
+  const el = document.getElementById('vet-list');
+  if(!sorted.length) { el.innerHTML = empty('🏥','Noch keine Tierarztbesuche eingetragen.'); return; }
+  const ins = D.profile.ins || {};
+
+  el.innerHTML = sorted.map(v=>{
+    // Rechnung-Status
+    const hasReceipt = !!v.receiptData;
+    const subDone    = !!v.submittedDate;
+    let receiptHtml  = '';
+
+    if(hasReceipt || true) { // immer anzeigen für Einreich-Workflow
+      const statusHtml = subDone
+        ? `<span class="sub-status done">✓ Eingereicht am ${toDE(v.submittedDate)}</span>`
+        : `<span class="sub-status pending">⏳ Noch nicht eingereicht</span>`;
+
+      const submitBtn = !subDone
+        ? `<button class="btn btn-primary btn-sm" onclick="submitClaim('${v.id}')" title="Bei HanseMerkur einreichen">
+            📤 Einreichen
+          </button>`
+        : '';
+
+      const downloadBtn = hasReceipt
+        ? `<button class="btn btn-secondary btn-sm" onclick="downloadReceipt('${v.id}')" title="Rechnung herunterladen">⬇ Rechnung</button>`
+        : '';
+
+      receiptHtml = `
+        <div class="receipt-box ${hasReceipt?'has-file':''} ${subDone?'submitted':''}">
+          <span style="font-size:1.1rem">${hasReceipt?'🧾':'📄'}</span>
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:600;font-size:.78rem">${hasReceipt?esc(v.receiptName||'Rechnung'):'Keine Rechnung hochgeladen'}</div>
+            ${ins.name?`<div style="font-size:.72rem;color:var(--text-2)">${esc(ins.name)}${ins.nr?' · Nr. '+esc(ins.nr):''}</div>`:''}
+            <div style="margin-top:.3rem">${statusHtml}</div>
+          </div>
+          <div style="display:flex;gap:.35rem;flex-shrink:0;flex-wrap:wrap">
+            ${downloadBtn}
+            ${submitBtn}
+          </div>
+        </div>`;
+    }
+
+    return `<div class="card">
+      <div class="card-hdr">
+        <div>
+          <div class="card-title">${esc(v.reason)}</div>
+          <div class="card-sub">${toDE(v.date)}${v.vet?' · '+esc(v.vet):''}</div>
+        </div>
+        <div class="card-acts">
+          <button class="btn btn-secondary btn-sm" onclick="editEntry('vet','${v.id}')">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="delEntry('vet','${v.id}')">🗑</button>
+        </div>
+      </div>
+      ${v.diagnosis?`<div style="font-size:.82rem;margin-top:.2rem"><strong>Diagnose:</strong> ${esc(v.diagnosis)}</div>`:''}
+      ${v.treatment?`<div style="font-size:.82rem;color:var(--text-2)"><strong>Behandlung:</strong> ${esc(v.treatment)}</div>`:''}
+      <div class="card-meta" style="margin-top:.4rem">
+        ${v.cost?`<span class="chip gray">💶 ${esc(v.cost)} €</span>`:''}
+        ${v.email?`<a href="mailto:${esc(v.email)}" style="text-decoration:none"><span class="chip">✉️ ${esc(v.email)}</span></a>`:''}
+        ${v.website?`<a href="${esc(v.website)}" target="_blank" rel="noopener" style="text-decoration:none"><span class="chip">🌐 Termin / Website</span></a>`:''}
+      </div>
+      ${receiptHtml}
+      ${v.notes?`<div style="font-size:.78rem;color:var(--text-2);margin-top:.45rem">${esc(v.notes)}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function downloadReceipt(id) {
+  const v = D.vetVisits.find(x=>x.id===id);
+  if(!v?.receiptData) { toast('⚠️ Keine Rechnung gespeichert'); return; }
+  const a = document.createElement('a');
+  a.href = v.receiptData;
+  a.download = v.receiptName || 'Rechnung';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+const HANSEMERKUR_URL = 'https://www.hansemerkur.at/schadenmeldung/tierkrankenversicherung';
+
+function submitClaim(id) {
+  const v = D.vetVisits.find(x=>x.id===id);
+  if(!v) return;
+  const ins = D.profile.ins || {};
+  const p   = D.profile;
+
+  const hasReceipt = !!v.receiptData;
+  const insNr  = ins.nr  || '—';
+  const insName = ins.name || 'HanseMerkur';
+  const ownerName = p.name ? `${p.name} (Tierhalter:in)` : '—';
+
+  // Schritt 1 – Versicherungsdaten
+  const copyRow = (lbl, val, fieldId) => val === '—' ? '' : `
+    <div class="claim-copy-row">
+      <span class="claim-copy-lbl">${lbl}</span>
+      <span class="claim-copy-val" id="cv-${fieldId}">${val}</span>
+      <button class="copy-btn" onclick="copyField('cv-${fieldId}',this)">📋 Kopieren</button>
+    </div>`;
+
+  const step1Done = insNr !== '—';
+  const step2Done = hasReceipt;
+
+  document.getElementById('claim-body').innerHTML = `
+    <p style="font-size:.82rem;color:var(--text-2);margin-bottom:.9rem">
+      Daten kopieren → Rechnung herunterladen → HanseMerkur-Formular öffnen und ausfüllen.
+    </p>
+
+    <!-- Schritt 1: Daten kopieren -->
+    <div class="claim-step${step1Done?' done':''}">
+      <div class="claim-step-num">1</div>
+      <div class="claim-step-body">
+        <div class="claim-step-title">Versicherungsdaten kopieren</div>
+        ${copyRow('Versicherungs-Nr.', insNr, 'nr')}
+        ${copyRow('Versicherer', insName, 'ins')}
+        ${copyRow('Tierhalter:in', ownerName, 'owner')}
+        ${copyRow('Tiername', p.breed ? `${p.name||'Diva'} (${p.breed})` : (p.name||'Diva'), 'pet')}
+        ${copyRow('Besuchsdatum', toDE(v.date), 'date')}
+        ${v.cost ? copyRow('Rechnungsbetrag', v.cost+' €', 'cost') : ''}
+        ${!step1Done ? `<div style="font-size:.76rem;color:var(--amber);margin-top:.3rem">⚠️ Versicherungsnummer im Profil hinterlegen</div>` : ''}
+      </div>
+    </div>
+
+    <!-- Schritt 2: Rechnung herunterladen -->
+    <div class="claim-step${step2Done?' done':''}">
+      <div class="claim-step-num">2</div>
+      <div class="claim-step-body">
+        <div class="claim-step-title">Rechnung herunterladen</div>
+        ${hasReceipt
+          ? `<button class="btn btn-secondary btn-sm" onclick="downloadReceipt('${v.id}');this.textContent='✓ Heruntergeladen'">
+              ⬇ ${esc(v.receiptName||'Rechnung')} herunterladen
+            </button>`
+          : `<div style="font-size:.78rem;color:var(--text-3)">Keine Rechnung hochgeladen.<br>
+              <button class="btn btn-secondary btn-sm" style="margin-top:.4rem" onclick="closeClaimHelper();editEntry('vet','${v.id}')">
+                ✏️ Besuch bearbeiten & Rechnung hinzufügen
+              </button></div>`
+        }
+      </div>
+    </div>
+
+    <!-- Schritt 3: Formular öffnen -->
+    <div class="claim-step">
+      <div class="claim-step-num">3</div>
+      <div class="claim-step-body">
+        <div class="claim-step-title">HanseMerkur-Formular öffnen</div>
+        <div style="font-size:.78rem;color:var(--text-2);margin-bottom:.5rem">
+          Versicherungsnummer + Rechnung im Formular einfügen
+        </div>
+        <a class="btn btn-primary btn-sm" href="${HANSEMERKUR_URL}" target="_blank" rel="noopener"
+           onclick="scheduleMarkSubmitted('${v.id}')">
+          🌐 HanseMerkur Schadenmeldung öffnen ↗
+        </a>
+      </div>
+    </div>
+
+    <hr class="claim-divider">
+
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem">
+      ${v.submittedDate
+        ? `<span style="font-size:.8rem;color:var(--green)">✓ Eingereicht am ${toDE(v.submittedDate)}</span>`
+        : `<button class="btn btn-secondary btn-sm" onclick="markSubmittedNow('${v.id}')">
+             ✓ Manuell als eingereicht markieren
+           </button>`
+      }
+      <button class="btn btn-secondary btn-sm" onclick="closeClaimHelper()">Schließen</button>
+    </div>`;
+
+  document.getElementById('claim-overlay').classList.add('open');
+}
+
+function copyField(elId, btn) {
+  const val = document.getElementById(elId)?.textContent || '';
+  navigator.clipboard.writeText(val).then(() => {
+    btn.textContent = '✓ Kopiert';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 Kopieren'; btn.classList.remove('copied'); }, 2000);
+  }).catch(() => {
+    // Fallback für ältere Browser
+    const ta = document.createElement('textarea');
+    ta.value = val; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    btn.textContent = '✓ Kopiert'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 Kopieren'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function scheduleMarkSubmitted(id) {
+  // Kurz warten dann fragen ob als eingereicht markieren
+  setTimeout(() => {
+    const v = D.vetVisits.find(x=>x.id===id);
+    if(v && !v.submittedDate) {
+      const el = document.getElementById('claim-body');
+      if(el) {
+        const btn = el.querySelector('[onclick*="markSubmittedNow"]');
+        if(btn) btn.style.background = 'var(--green-pale)';
+      }
+    }
+  }, 3000);
+}
+
+function markSubmittedNow(id) {
+  const v = D.vetVisits.find(x=>x.id===id);
+  if(!v) return;
+  v.submittedDate = today();
+  save(); renderVet();
+  toast('✓ Als eingereicht markiert');
+  closeClaimHelper();
+}
+
+function closeClaimHelper() {
+  document.getElementById('claim-overlay').classList.remove('open');
+}
+
+
+// ================================================================
+//  REMINDERS
+// ================================================================
+function renderRem() {
+  const open = D.reminders.filter(r=>!r.done).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  const done = D.reminders.filter(r=>r.done);
+  document.getElementById('rem-sub').textContent = `${open.length} offen · ${done.length} erledigt`;
+  const el = document.getElementById('rem-list');
+  const all = [...open, ...done];
+  if(!all.length) { el.innerHTML = empty('🔔','Noch keine Erinnerungen eingetragen.'); return; }
+  const RLBL = {none:'',monthly:'🔄 Monatlich',yearly:'🔄 Jährlich'};
+  el.innerHTML = all.map(r=>{
+    const d = r.date ? daysAway(r.date) : null;
+    return `<div class="card" style="${r.done?'opacity:.52':''}">
+      <div class="card-hdr">
+        <div style="display:flex;align-items:flex-start;gap:.65rem">
+          <input type="checkbox" ${r.done?'checked':''} style="margin-top:3px;accent-color:var(--green);width:16px;height:16px;cursor:pointer;flex-shrink:0"
+            onchange="toggleRem('${r.id}',this.checked)">
+          <div>
+            <div class="card-title" style="${r.done?'text-decoration:line-through':''}">${esc(r.title)}</div>
+            <div class="card-sub">${r.date?toDE(r.date):'Kein Datum'} ${RLBL[r.repeat]||''}</div>
+          </div>
+        </div>
+        <div class="card-acts">
+          <button class="btn btn-secondary btn-sm" onclick="editEntry('reminder','${r.id}')">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="delEntry('reminder','${r.id}')">🗑</button>
+        </div>
+      </div>
+      ${!r.done&&r.date?`<div class="card-meta">${badge(d)}</div>`:''}
+      ${r.notes?`<div style="font-size:.78rem;color:var(--text-2);margin-top:.35rem">${esc(r.notes)}</div>`:''}
+    </div>`;
+  }).join('');
+}
+function toggleRem(id, v) {
+  const r = D.reminders.find(x=>x.id===id);
+  if(r){ r.done=v; save(); renderRem(); }
+}
+
+// ================================================================
+//  FORM DEFINITIONS
+// ================================================================
+const FORMS = {
+  vacc: {
+    title:'💉 Impfung erfassen', col:'vaccinations',
+    fields:[
+      {id:'name',    label:'Impfstoff', type:'vaccselect', req:true},
+      {id:'date',    label:'Datum',     type:'date', req:true},
+      {id:'nextDate',label:'Nächste fällig am', type:'date'},
+      {id:'vet',     label:'Tierarzt',  type:'text'},
+      {id:'batch',   label:'Chargennummer', type:'text'},
+      {id:'notes',   label:'Notizen',   type:'textarea'}
+    ]
+  },
+  heat: {
+    title:'🌸 Läufigkeit eintragen', col:'heatCycles',
+    fields:[
+      {id:'startDate',label:'Beginn',    type:'date', req:true},
+      {id:'endDate',  label:'Ende (ca.)',type:'date'},
+      {id:'notes',    label:'Beobachtungen / Symptome', type:'textarea'}
+    ]
+  },
+  med: {
+    title:'💊 Medikament erfassen', col:'medications',
+    fields:[
+      {id:'name',      label:'Präparat / Name',    type:'text', req:true},
+      {id:'dose',      label:'Dosis',              type:'text'},
+      {id:'unit',      label:'Einheit',            type:'text'},
+      {id:'frequency', label:'Häufigkeit',         type:'text'},
+      {id:'startDate', label:'Beginn',             type:'date', req:true},
+      {id:'endDate',   label:'Ende',               type:'date'},
+      {id:'reason',    label:'Indikation / Grund', type:'text'},
+      {id:'refillDate',label:'Nachfüllen am',      type:'date'},
+      {id:'active',    label:'Aktuell aktiv',      type:'checkbox'},
+      {id:'notes',     label:'Notizen',            type:'textarea'}
+    ]
+  },
+  parasite: {
+    title:'🛡️ Parasitenschutz eintragen', col:'parasites',
+    fields:[
+      {id:'type',    label:'Kategorie', type:'select',
+       opts:[
+         {v:'spot-on', l:'🐱 Spot-on (Flöhe & Läuse)'},
+         {v:'tick',    l:'🕷️ Zeckenschutz'},
+         {v:'worm',    l:'🐛 Entwurmung'},
+         {v:'combo',   l:'🛡️ Kombipräparat'}
+       ], req:true},
+      {id:'product', label:'Produkt', type:'parasite-product', req:true},
+      {id:'date',    label:'Gegeben am',  type:'date', req:true},
+      {id:'nextDate',label:'Nächste Gabe', type:'date'},
+      {id:'notes',   label:'Notizen',     type:'textarea'}
+    ]
+  },
+  weight: {
+    title:'⚖️ Gewicht erfassen', col:'weights',
+    fields:[
+      {id:'weight',label:'Gewicht (kg)', type:'number', req:true},
+      {id:'date',  label:'Datum',        type:'date',   req:true},
+      {id:'notes', label:'Notizen',      type:'text'}
+    ]
+  },
+  vet: {
+    title:'🏥 Tierarztbesuch', col:'vetVisits',
+    fields:[
+      {id:'date',      label:'Datum',              type:'date',   req:true},
+      {id:'reason',    label:'Anlass / Grund',     type:'text',   req:true},
+      {id:'vet',       label:'Tierarzt / Klinik',  type:'text'},
+      {id:'email',     label:'E-Mail Tierarzt',    type:'email'},
+      {id:'website',   label:'Website / Terminlink', type:'url'},
+      {id:'diagnosis', label:'Diagnose',           type:'text'},
+      {id:'treatment', label:'Behandlung',         type:'text'},
+      {id:'cost',      label:'Kosten (€)',         type:'number'},
+      {id:'receipt',   label:'Rechnung hochladen (JPG/PNG/PDF)', type:'file'},
+      {id:'notes',     label:'Notizen',            type:'textarea'}
+    ]
+  },
+  reminder: {
+    title:'🔔 Erinnerung', col:'reminders',
+    fields:[
+      {id:'title',  label:'Titel',          type:'text', req:true},
+      {id:'date',   label:'Datum',          type:'date'},
+      {id:'repeat', label:'Wiederholung',   type:'select', opts:[{v:'none',l:'Keine'},{v:'monthly',l:'Monatlich'},{v:'yearly',l:'Jährlich'}]},
+      {id:'notes',  label:'Notizen',        type:'text'}
+    ]
+  }
+};
+
+const TAB_MAP = {vacc:'impfungen',heat:'laefigkeit',med:'medikamente',parasite:'parasiten',weight:'gewicht',vet:'tierarzt',reminder:'erinnerungen',food:'fuetterung',treat:'fuetterung'};
+let curForm = null, editId = null;
+
+// ================================================================
+//  FÜTTERUNG
+// ================================================================
+let foodView = 'food'; // 'food' | 'treat'
+
+function setFoodView(v, btn) {
+  foodView = v;
+  document.querySelectorAll('#food-toggle .tog').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('food-add-btn').onclick = openFoodForm;
+  renderFood();
+}
+
+function openFoodForm(pre={}) {
+  const type = foodView;
+  curForm = type; editId = null;
+  buildFoodModal(type, pre);
+  document.getElementById('overlay').style.display='flex';
+}
+
+function editFoodEntry(type, id) {
+  const col = type==='food' ? D.foods : D.treats;
+  const entry = col.find(e=>e.id===id);
+  if(!entry) return;
+  curForm=type; editId=id;
+  buildFoodModal(type, entry);
+  document.getElementById('overlay').style.display='flex';
+}
+
+function buildFoodModal(type, pre={}) {
+  const isTreat = type==='treat';
+  const title   = isTreat ? '🦴 Belohnung erfassen' : '🥩 Hauptfutter erfassen';
+  const rating  = pre.rating || 0;
+  const stars   = [1,2,3,4,5].map(n=>
+    `<span class="star${n<=rating?' on':''}" onclick="setFoodRating(${n})" data-val="${n}">⭐</span>`
+  ).join('');
+
+  document.getElementById('modal-body').innerHTML = `
+    <div class="modal-title">${title}</div>
+    <div class="form-grid">
+      <div class="fg"><label>Bezeichnung / Marke *</label>
+        <input type="text" id="ff-food-name" value="${esc(pre.name||'')}" placeholder="z.B. Schesir Huhn, Barfen..."></div>
+      ${!isTreat ? `
+      <div class="form-row">
+        <div class="fg"><label>Menge pro Mahlzeit</label>
+          <input type="text" id="ff-food-portion" value="${esc(pre.portion||'')}" placeholder="z.B. 180 g"></div>
+        <div class="fg"><label>Mahlzeiten pro Tag</label>
+          <input type="number" id="ff-food-meals" value="${esc(pre.meals||'')}" placeholder="2" min="1" max="6" step="1"></div>
+      </div>` : `
+      <div class="fg"><label>Menge / Einheit</label>
+        <input type="text" id="ff-food-portion" value="${esc(pre.portion||'')}" placeholder="z.B. 1 Stück, 20 g"></div>`}
+      <div class="fg"><label>Diva's Beliebtheitsbewertung</label>
+        <div style="margin-top:.25rem">
+          <div class="star-row" id="star-row">${stars}</div>
+          <input type="hidden" id="ff-food-rating" value="${rating}">
+          <div style="font-size:.72rem;color:var(--text-3);margin-top:.2rem" id="rating-label">${ratingLabel(rating)}</div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="fg"><label>Bezugsquelle / Shop</label>
+          <input type="text" id="ff-food-shop" value="${esc(pre.shop||'')}" placeholder="z.B. Fressnapf, Zooplus"></div>
+        <div class="fg"><label>Preis</label>
+          <input type="text" id="ff-food-price" value="${esc(pre.price||'')}" placeholder="z.B. 2,40 €/Dose"></div>
+      </div>
+      <div class="fg"><label>Link zum Shop</label>
+        <input type="url" id="ff-food-link" value="${esc(pre.link||'')}" placeholder="https://..."></div>
+      <div class="fg"><label>Notizen</label>
+        <textarea id="ff-food-notes">${esc(pre.notes||'')}</textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeForm()">Abbrechen</button>
+      <button class="btn btn-primary" onclick="submitFoodForm()">💾 Speichern</button>
+    </div>`;
+}
+
+function ratingLabel(r) {
+  return ['','😒 Mäßig','😐 Geht so','🙂 Mag ich','😋 Lecker!','🤩 Lieblingsessen!'][r] || 'Noch nicht bewertet';
+}
+
+function setFoodRating(n) {
+  document.getElementById('ff-food-rating').value = n;
+  document.getElementById('rating-label').textContent = ratingLabel(n);
+  document.querySelectorAll('#star-row .star').forEach(s => {
+    s.classList.toggle('on', parseInt(s.dataset.val) <= n);
+  });
+}
+
+function submitFoodForm() {
+  const name = document.getElementById('ff-food-name')?.value.trim();
+  if(!name) { document.getElementById('ff-food-name').style.borderColor='#ef4444'; return; }
+  const entry = {
+    name,
+    portion:  document.getElementById('ff-food-portion')?.value || '',
+    meals:    document.getElementById('ff-food-meals')?.value || '',
+    rating:   parseInt(document.getElementById('ff-food-rating')?.value) || 0,
+    shop:     document.getElementById('ff-food-shop')?.value || '',
+    price:    document.getElementById('ff-food-price')?.value || '',
+    link:     document.getElementById('ff-food-link')?.value || '',
+    notes:    document.getElementById('ff-food-notes')?.value || ''
+  };
+  const col = curForm==='treat' ? 'treats' : 'foods';
+  const tabName = TAB_MAP[curForm];
+  if(editId) {
+    const i = D[col].findIndex(e=>e.id===editId);
+    if(i>=0) D[col][i] = {...D[col][i], ...entry};
+  } else {
+    entry.id = uid(); D[col].push(entry);
+  }
+  save(); closeForm(); toast('✓ Gespeichert');
+  goTab(tabName);
+}
+
+function delFoodEntry(type, id) {
+  if(!confirm('Eintrag löschen?')) return;
+  const col = type==='treat' ? 'treats' : 'foods';
+  D[col] = D[col].filter(e=>e.id!==id);
+  save(); toast('✓ Gelöscht'); renderFood();
+}
+
+function renderFood() {
+  const isTreat = foodView==='treat';
+  const items = [...(isTreat ? D.treats : D.foods)]
+    .sort((a,b)=>(b.rating||0)-(a.rating||0));
+  const total = D.foods.length + D.treats.length;
+  document.getElementById('food-sub').textContent =
+    `${D.foods.length} Futter · ${D.treats.length} Belohnungen`;
+  const el = document.getElementById('food-list');
+  if(!items.length) {
+    el.innerHTML = empty(isTreat?'🦴':'🥩',
+      isTreat?'Noch keine Belohnungen eingetragen.':'Noch kein Hauptfutter eingetragen.');
+    return;
+  }
+  el.innerHTML = items.map(f=>{
+    const stars = [1,2,3,4,5].map(n=>
+      `<span class="food-card-star${n<=(f.rating||0)?' on':''}">⭐</span>`).join('');
+    return `<div class="card">
+      <div class="card-hdr">
+        <div style="flex:1;min-width:0">
+          <div class="card-title">${esc(f.name)}</div>
+          <div class="food-card-rating">
+            <div class="food-card-stars">${stars}</div>
+            <span style="font-size:.74rem;color:var(--text-2)">${ratingLabel(f.rating||0)}</span>
+          </div>
+        </div>
+        <div class="card-acts">
+          <button class="btn btn-secondary btn-sm" onclick="editFoodEntry('${foodView}','${f.id}')">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="delFoodEntry('${foodView}','${f.id}')">🗑</button>
+        </div>
+      </div>
+      <div class="food-detail-row">
+        ${f.portion?`<span class="chip gray">🍽️ ${esc(f.portion)}${f.meals?' × '+esc(f.meals)+'/Tag':''}</span>`:''}
+        ${f.price?`<span class="chip gray">💶 ${esc(f.price)}</span>`:''}
+        ${f.shop&&!f.link?`<span class="chip">🛒 ${esc(f.shop)}</span>`:''}
+        ${f.shop&&f.link?`<a href="${esc(f.link)}" target="_blank" rel="noopener" style="text-decoration:none"><span class="chip">🛒 ${esc(f.shop)}</span></a>`:''}
+        ${!f.shop&&f.link?`<a href="${esc(f.link)}" target="_blank" rel="noopener" style="text-decoration:none"><span class="chip">🌐 Shop-Link</span></a>`:''}
+      </div>
+      ${f.notes?`<div style="font-size:.78rem;color:var(--text-2);margin-top:.45rem">${esc(f.notes)}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function openForm(type, pre={}) {
+  curForm=type; editId=null; buildForm(FORMS[type], pre);
+  document.getElementById('overlay').style.display='flex';
+}
+function editEntry(type, id) {
+  const cfg=FORMS[type];
+  const entry=D[cfg.col].find(e=>e.id===id);
+  if(!entry) return;
+  curForm=type; editId=id; buildForm(cfg, entry);
+  document.getElementById('overlay').style.display='flex';
+}
+
+// Österreichische Impfstoffe (AGES-registriert / WSAVA-Kategorien)
+const AT_VACCINES = {
+  'Kombinationsimpfstoffe – Kern (DHPPi)': [
+    'Nobivac DHPPi (MSD) – Staupe, Parvo, Hepatitis, Parainfluenza',
+    'Nobivac Puppy DP (MSD) – Staupe, Parvo (Welpen)',
+    'Eurican DHPPI2 (Boehringer) – Staupe, Parvo, Hepatitis, Parainfluenza',
+    'Canigen DHPPi (Virbac) – Staupe, Parvo, Hepatitis, Parainfluenza',
+    'Versican Plus DHPPiLR (Zoetis) – Staupe, Parvo, Hepatitis, Parainfluenza + Lepto',
+  ],
+  'Kombination + Leptospirose': [
+    'Nobivac DHPPi + L4 (MSD) – Kern + Leptospirose 4 Serovare',
+    'Nobivac DHPPi + Lepto (MSD) – Kern + Leptospirose 2 Serovare',
+    'Canigen DHPPi/L (Virbac) – Kern + Leptospirose',
+    'Versican Plus DHPPiLR (Zoetis) – Kern + Leptospirose',
+  ],
+  'Kombination + Tollwut': [
+    'Nobivac DHPPi + Rabies (MSD) – Kern + Tollwut',
+    'Nobivac DHPPi + L4 + Rabies (MSD) – Kern + Lepto + Tollwut',
+    'Eurican DHPPI2-L + Rabisin (Boehringer) – Kern + Lepto + Tollwut',
+  ],
+  'Tollwut (Monovalent)': [
+    'Nobivac Rabies (MSD)',
+    'Rabisin (Boehringer)',
+    'Versiguard Rabies (Zoetis)',
+    'Rabigen Mono (Virbac)',
+  ],
+  'Leptospirose (Monovalent)': [
+    'Nobivac L4 (MSD) – 4 Serovare',
+    'Nobivac Lepto (MSD) – 2 Serovare',
+    'Canigen L (Virbac)',
+    'Versican Plus L4 (Zoetis)',
+  ],
+  'Zwingerhusten / Bordetella': [
+    'Nobivac KC (MSD) – intranasal, Bordetella + Parainfluenza',
+    'Bronchi-Shield III (Zoetis) – intranasal',
+    'Canigen BB (Virbac) – oral',
+  ],
+  'Situative Impfungen': [
+    'Merilym 3 – Borreliose / Lyme (Boehringer)',
+    'CaniLeish (Virbac) – Leishmaniose',
+    'Letifend (Leti) – Leishmaniose',
+  ]
+};
+
+// Österreichische Parasitenprodukte (AGES-registriert, Stand 2026)
+const AT_PARASITES = {
+  'spot-on': {
+    'Spot-on (Flöhe & Läuse)': [
+      'Advantage (Imidacloprid) – Flöhe, Läuse · Elanco',
+      'Frontline Combo (Fipronil + Methoprén) – Flöhe, Zecken, Läuse · Boehringer',
+      'Frontline Spot On (Fipronil) – Flöhe, Zecken · Boehringer',
+      'Advantix (Imidacloprid + Permethrin) – Flöhe, Zecken, Läuse, Mücken · Elanco',
+      'Bravecto Spot On (Fluralaner) – Flöhe, Zecken · 3 Monate · MSD',
+      'Stronghold (Selamectin) – Flöhe, Spulwürmer, Milben · Zoetis',
+      'Stronghold Plus (Selamectin + Sarolaner) – Flöhe, Zecken, Milben · Zoetis',
+      'Nexgard Spectra Spot On (Afoxolaner + Moxidectin) – Flöhe, Zecken, Herzwurm · Boehringer',
+      'Seresto Halsband (Imidacloprid + Flumethrin) – Flöhe, Zecken · 8 Monate · Elanco'
+    ],
+    'Tabletten (Flöhe & Zecken)': [
+      'Bravecto Kautablette (Fluralaner) – Flöhe, Zecken · 3 Monate · MSD',
+      'Nexgard (Afoxolaner) – Flöhe, Zecken · monatlich · Boehringer',
+      'Credelio (Lotilaner) – Flöhe, Zecken · monatlich · Elanco',
+      'Simparica (Sarolaner) – Flöhe, Zecken, Milben · monatlich · Zoetis'
+    ]
+  },
+  'tick': {
+    'Zeckenschutz': [
+      'Scalibor Halsband (Deltamethrin) – Zecken, Mücken, Sandmücken · MSD',
+      'Exspot Spot On (Permethrin) – Zecken · Schering-Plough',
+      'Advantix (Imidacloprid + Permethrin) – Flöhe, Zecken, Mücken · Elanco',
+      'Frontline Combo (Fipronil + Methoprén) – Flöhe, Zecken · Boehringer',
+      'Bravecto Spot On (Fluralaner) – Flöhe, Zecken · 3 Monate · MSD',
+      'Bravecto Kautablette (Fluralaner) – Flöhe, Zecken · 3 Monate · MSD',
+      'Nexgard (Afoxolaner) – Flöhe, Zecken · monatlich · Boehringer',
+      'Simparica (Sarolaner) – Flöhe, Zecken, Milben · Zoetis'
+    ]
+  },
+  'worm': {
+    'Tabletten / orale Entwurmung': [
+      'Drontal (Praziquantel + Pyrantel) – Spul/Haken/Bandwurm · Elanco',
+      'Drontal Plus (Praziquantel + Pyrantel + Febantel) – + Peitschenwurm · Elanco',
+      'Drontal Chewable – Breitspektrum Kautablette · Elanco',
+      'Milbemax (Milbemycinoxim + Praziquantel) – Breitspektrum · Elanco',
+      'Caniverm (Fenbendazol + Praziquantel) – Breitspektrum · Livisto',
+      'Panacur (Fenbendazol) – Spul/Haken/Peitschenwurm, Giardien · MSD',
+      'Nexgard Spectra (Afoxolaner + Milbemycinoxim) – + Flöhe/Zecken/Herzwurm · Boehringer'
+    ],
+    'Spot-on Entwurmung': [
+      'Profender Spot On (Emodepsid + Praziquantel) – Spul/Bandwurm · Bayer/Elanco',
+      'Advocate (Imidacloprid + Moxidectin) – Flöhe + Lungenwurm + Herzwurm + Spulwurm · Elanco',
+      'Stronghold (Selamectin) – Flöhe + Spulwürmer + Milben · Zoetis'
+    ]
+  },
+  'combo': {
+    'Breitspektrum-Kombipräparate': [
+      'Advocate (Imidacloprid + Moxidectin) – Flöhe, Lungenwurm, Herzwurm, Spulwurm · Elanco',
+      'Nexgard Spectra (Afoxolaner + Milbemycinoxim) – Flöhe, Zecken, Würmer · Boehringer',
+      'Nexgard Spectra Spot On – Flöhe, Zecken, Würmer, Milben · Boehringer',
+      'Stronghold Plus (Selamectin + Sarolaner) – Flöhe, Zecken, Würmer, Milben · Zoetis'
+    ]
+  }
+};
+
+function buildParasiteProduct(selType, selProduct) {
+  const groups = AT_PARASITES[selType] || {};
+  const opts = Object.entries(groups).map(([grp, items])=>
+    `<optgroup label="${grp}">${items.map(i=>`<option${selProduct===i?' selected':''}>${i}</option>`).join('')}</optgroup>`
+  ).join('');
+  const isOther = selProduct && !Object.values(groups).flat().includes(selProduct);
+  return `<div class="fg">
+    <label>Produkt / Wirkstoff *</label>
+    <select id="ff-product" onchange="onParasiteProduct(this)">
+      <option value="">— bitte wählen —</option>
+      ${opts}
+      <option value="__other__"${isOther?' selected':''}>Anderes Produkt (händisch)</option>
+    </select>
+  </div>
+  <div class="fg" id="ff-product-other-wrap" style="${isOther?'':'display:none'}">
+    <label>Produkt – Freitext</label>
+    <input type="text" id="ff-product-other" placeholder="Produktname eingeben…" value="${isOther?esc(selProduct):''}">
+  </div>`;
+}
+
+function onParasiteTypeChange(sel) {
+  // Rebuild product selector for new type
+  const productArea = document.getElementById('parasite-product-area');
+  if(productArea) productArea.innerHTML = buildParasiteProduct(sel.value, '');
+}
+
+function onParasiteProduct(sel) {
+  const wrap = document.getElementById('ff-product-other-wrap');
+  if(wrap) wrap.style.display = sel.value === '__other__' ? 'flex' : 'none';
+}
+
+function buildVaccSelect(selVal) {
+  const opts = Object.entries(AT_VACCINES).map(([grp, items])=>
+    `<optgroup label="${grp}">${items.map(i=>`<option${selVal===i?' selected':''}>${i}</option>`).join('')}</optgroup>`
+  ).join('');
+  return `<div class="fg">
+    <label>Impfstoff *</label>
+    <select id="ff-name" onchange="onVaccSelect(this)">
+      <option value="">— bitte wählen —</option>
+      ${opts}
+      <option value="__other__"${selVal==='__other__'||(!selVal&&selVal!==''&&!Object.values(AT_VACCINES).flat().includes(selVal))?' selected':''}>Anderer Impfstoff (händisch)</option>
+    </select>
+  </div>
+  <div class="fg" id="ff-name-other-wrap" style="${(!selVal||Object.values(AT_VACCINES).flat().includes(selVal))&&selVal!=='__other__'?'display:none':''}">
+    <label>Impfstoff – Freitext</label>
+    <input type="text" id="ff-name-other" placeholder="Impfstoffname eingeben…" value="${(!selVal||Object.values(AT_VACCINES).flat().includes(selVal))?'':esc(selVal)}">
+  </div>`;
+}
+
+function onVaccSelect(sel) {
+  const wrap = document.getElementById('ff-name-other-wrap');
+  wrap.style.display = sel.value === '__other__' ? 'flex' : 'none';
+}
+
+function buildForm(cfg, pre={}) {
+  const t = today();
+  document.getElementById('modal-body').innerHTML = `
+    <div class="modal-title">${cfg.title}</div>
+    <div class="form-grid">${cfg.fields.map(f=>{
+      const v = pre[f.id]??'';
+      if(f.type==='textarea')   return `<div class="fg"><label>${f.label}</label><textarea id="ff-${f.id}">${esc(String(v))}</textarea></div>`;
+      if(f.type==='select') {
+        const isParaType = curForm==='parasite' && f.id==='type';
+        const onChange = isParaType ? ' onchange="onParasiteTypeChange(this)"' : '';
+        return `<div class="fg"><label>${f.label}</label><select id="ff-${f.id}"${onChange}>${f.opts.map(o=>`<option value="${o.v}"${v===o.v?' selected':''}>${o.l}</option>`).join('')}</select></div>`;
+      }
+      if(f.type==='checkbox')   return `<div class="fg row"><input type="checkbox" id="ff-${f.id}"${v!==false?' checked':''}><label for="ff-${f.id}">${f.label}</label></div>`;
+      if(f.type==='vaccselect') return buildVaccSelect(v);
+      if(f.type==='parasite-product') {
+        const currentType = pre.type || 'spot-on';
+        return `<div id="parasite-product-area">${buildParasiteProduct(currentType, v)}</div>`;
+      }
+      if(f.type==='file') {
+        const hasFile = !!pre.receiptData;
+        return `<div class="fg">
+          <label>${f.label}</label>
+          <input type="file" id="ff-receipt-upload" accept=".jpg,.jpeg,.png,.pdf" style="border:none;padding:.2rem 0">
+          ${hasFile?`<div style="font-size:.76rem;color:var(--green);margin-top:.3rem">✓ Datei vorhanden: ${esc(pre.receiptName||'Rechnung')}</div>`:''}
+        </div>`;
+      }
+      const val = f.type==='date'&&!v ? t : v;
+      return `<div class="fg"><label>${f.label}${f.req?' *':''}</label><input type="${f.type}" id="ff-${f.id}" value="${esc(String(val))}"${f.type==='number'?' step="0.05"':''}></div>`;
+    }).join('')}</div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeForm()">Abbrechen</button>
+      <button class="btn btn-primary" onclick="submitForm()">💾 Speichern</button>
+    </div>`;
+}
+
+function submitForm() {
+  const cfg = FORMS[curForm];
+  const entry = {};
+
+  // Handle vaccselect
+  const vaccEl = document.getElementById('ff-name');
+  if(vaccEl && cfg.fields.find(f=>f.type==='vaccselect')) {
+    const sel = vaccEl.value;
+    if(!sel) { vaccEl.style.borderColor='#ef4444'; vaccEl.focus(); return; }
+    const otherEl = document.getElementById('ff-name-other');
+    entry.name = sel==='__other__' ? (otherEl?.value.trim()||'Anderer Impfstoff') : sel;
+  }
+
+  // Handle file upload async
+  const fileEl = document.getElementById('ff-receipt-upload');
+  if(fileEl && fileEl.files.length) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      entry.receiptData = e.target.result;
+      entry.receiptName = fileEl.files[0].name;
+      finishSubmit(cfg, entry);
+    };
+    reader.readAsDataURL(fileEl.files[0]);
+    // Collect other fields first
+    collectFields(cfg, entry);
+    return; // async path
+  }
+
+  if(!collectFields(cfg, entry)) return;
+  finishSubmit(cfg, entry);
+}
+
+function collectFields(cfg, entry) {
+  for(const f of cfg.fields) {
+    if(f.type==='vaccselect'||f.type==='file') continue;
+    if(f.type==='parasite-product') {
+      const sel = document.getElementById('ff-product');
+      if(!sel || !sel.value) {
+        if(sel) sel.style.borderColor='#ef4444';
+        return false;
+      }
+      const otherEl = document.getElementById('ff-product-other');
+      entry.product = sel.value==='__other__'
+        ? (otherEl?.value.trim()||'Anderes Produkt')
+        : sel.value;
+      continue;
+    }
+    const el = document.getElementById('ff-'+f.id);
+    if(!el) continue;
+    if(f.req && !el.value.trim()) { el.style.borderColor='#ef4444'; el.focus(); return false; }
+    entry[f.id] = f.type==='checkbox' ? el.checked : f.type==='number' ? (parseFloat(el.value)||el.value) : el.value;
+  }
+  return true;
+}
+
+function finishSubmit(cfg, entry) {
+  if(editId) {
+    const i = D[cfg.col].findIndex(e=>e.id===editId);
+    if(i>=0) D[cfg.col][i]={...D[cfg.col][i],...entry};
+  } else {
+    entry.id=uid(); D[cfg.col].push(entry);
+  }
+  const tabName = TAB_MAP[curForm]; // curForm VOR closeForm() sichern!
+  save(); closeForm(); toast('✓ Gespeichert');
+  goTab(tabName);
+}
+
+function delEntry(type, id) {
+  const cfg = FORMS[type];
+  if(!cfg) { console.error('delEntry: unknown type', type); return; }
+  if(!Array.isArray(D[cfg.col])) D[cfg.col] = [];
+  const before = D[cfg.col].length;
+  D[cfg.col] = D[cfg.col].filter(e => String(e.id) !== String(id));
+  const after = D[cfg.col].length;
+  save();
+  toast(after < before ? '✓ Gelöscht' : '⚠️ Eintrag nicht gefunden');
+  try { goTab(TAB_MAP[type]); } catch(err) {
+    console.error('goTab error:', err);
+    // Fallback: render direkt
+    const renderFns = {vacc:renderVacc,heat:renderHeat,med:renderMeds,parasite:renderPara,weight:renderWeight,vet:renderVet,reminder:renderRem};
+    renderFns[type]?.();
+  }
+}
+
+function closeForm() { document.getElementById('overlay').style.display='none'; curForm=null; editId=null; }
+function bgClose(e)  { if(e.target.id==='overlay') closeForm(); }
+
+function goTab(name) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.querySelector(`[data-tab="${name}"]`).classList.add('active');
+  RENDER[name]?.();
+}
+
+// ================================================================
+//  JSON EXPORT / IMPORT
+// ================================================================
+function exportJSON() {
+  const blob = new Blob([JSON.stringify(D,null,2)],{type:'application/json'});
+  const a = Object.assign(document.createElement('a'),{href:URL.createObjectURL(blob),download:'diva-gesundheit-'+today()+'.json'});
+  a.click(); URL.revokeObjectURL(a.href); toast('✓ JSON exportiert');
+}
+function triggerImport() { document.getElementById('importFile').click(); }
+function importJSON(e) {
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    try {
+      const imp=JSON.parse(ev.target.result);
+      if(confirm('Alle Daten durch Import überschreiben?')) {
+        D={...DEF,...imp}; save(); renderDash(); toast('✓ Importiert');
+        goTab('dashboard');
+      }
+    } catch { toast('❌ Importfehler'); }
+  };
+  r.readAsText(f); e.target.value='';
+}
+
+// ================================================================
+//  iCAL EXPORT
+// ================================================================
+function exportIcal() {
+  const evs=[];
+  D.reminders.filter(r=>!r.done&&r.date).forEach(r=>evs.push({s:r.title,d:r.date,desc:r.notes||''}));
+  D.vaccinations.filter(v=>v.nextDate).forEach(v=>evs.push({s:'💉 Impfung: '+v.name,d:v.nextDate,desc:''}));
+  D.parasites.filter(p=>p.nextDate).forEach(p=>{
+    const l={flea:'Flohschutz',tick:'Zeckenschutz',worm:'Entwurmung'}[p.type]||p.type;
+    evs.push({s:'🛡️ '+l+': '+p.product,d:p.nextDate,desc:''});
+  });
+  if(!evs.length){toast('Keine Termine vorhanden');return;}
+  const stamp=new Date().toISOString().replace(/[-:]/g,'').slice(0,15)+'Z';
+  const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//DivaGesundheit//AT','CALSCALE:GREGORIAN'];
+  evs.forEach(ev=>{
+    const d=ev.d.replace(/-/g,'');
+    lines.push('BEGIN:VEVENT',`DTSTART;VALUE=DATE:${d}`,`DTEND;VALUE=DATE:${d}`,`DTSTAMP:${stamp}`,`SUMMARY:${ev.s}`);
+    if(ev.desc) lines.push(`DESCRIPTION:${ev.desc}`);
+    lines.push('END:VEVENT');
+  });
+  lines.push('END:VCALENDAR');
+  const blob=new Blob([lines.join('\r\n')],{type:'text/calendar'});
+  const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(blob),download:'diva-termine.ics'});
+  a.click(); URL.revokeObjectURL(a.href); toast(`✓ iCal: ${evs.length} Termine`);
+}
+
+// ================================================================
+//  TOAST
+// ================================================================
+function toast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+// ================================================================
+//  KRANKHEITEN – WISSENSDATENBANK (Wien / Österreich)
+// ================================================================
+const DISEASE_DB = [
+  {
+    id:'borreliose',
+    name:'Borreliose (Lyme-Borreliose)',
+    ico:'🕷️',
+    sev:'high',
+    sevLabel:'Wichtig',
+    region:'Sehr häufig in AT/Wien-Umgebung',
+    cause:'Borrelia burgdorferi s.l., übertragen durch Ixodes ricinus (Holzbock)',
+    symptoms:[
+      'Wanderröte (Erythema migrans) – häufig übersehen',
+      'Lahmheit, Gelenksschwellungen (wechselnd)',
+      'Fieber, Apathie, Fressunlust',
+      'Seltener: Nieren-, Herz- oder Nervenbeteiligung',
+      'Chronisch: rezidivierende Lahmheit, Proteinurie'
+    ],
+    therapy:[
+      'Doxycyclin 10 mg/kg 1× tägl. für 4 Wochen (Mittel der Wahl)',
+      'Alternativ: Amoxicillin, Azithromycin',
+      'Bei Nierenbeteiligung (Lyme-Nephritis): intensivere Therapie + supportiv',
+      'Impfung möglich (Merilym 3) – jährliche Auffrischung'
+    ],
+    prevention:'Zeckenschutz (Spot-on, Halsbänder), Impfung in Endemiegebieten, tägliche Zeckenkontrolle',
+    note:'Inkubationszeit 2–5 Monate. Serologischer Titelnachweis allein nicht therapieentscheidend – klinische Korrelation erforderlich.'
+  },
+  {
+    id:'fsme',
+    name:'FSME (Frühsommer-Meningoenzephalitis)',
+    ico:'🦠',
+    sev:'high',
+    sevLabel:'Wichtig',
+    region:'Endemisch in ganz Österreich, v.a. Wienerwald',
+    cause:'FSME-Virus (Flavivirus), Übertragung durch Holzbock (Ixodes ricinus)',
+    symptoms:[
+      'Fieber (biphasischer Verlauf möglich)',
+      'Neurologische Symptome: Ataxie, Krämpfe, Paresen',
+      'Bewusstseinsveränderungen, Wesensänderung',
+      'Hunde reagieren milder als Menschen, Verlauf oft subklinisch',
+      'Schwere Enzephalitis selten, aber möglich'
+    ],
+    therapy:[
+      'Keine spezifische antivirale Therapie verfügbar',
+      'Supportive Behandlung: Anfallskontrolle (Diazepam, Phenobarbital)',
+      'Kortikosteroide bei Hirnödem (kontroversiell)',
+      'Infusionstherapie, Pflege'
+    ],
+    prevention:'Zeckenschutz! Keine zugelassene Schutzimpfung für Hunde (Humanimpfstoff nicht anwendbar)',
+    note:'Hunde sind Wirtstiere ohne Reservoirfunktion. Infektion über Holzbock, nicht direkter Hund-Mensch-Transfer.'
+  },
+  {
+    id:'babesiose',
+    name:'Babesiose (Hundemalaria)',
+    ico:'🔬',
+    sev:'high',
+    sevLabel:'Notfall',
+    region:'Zunehmend in AT (Dermacentor reticulatus als Vektor)',
+    cause:'Babesia canis, übertragen durch Dermacentor reticulatus (Auwaldzecke)',
+    symptoms:[
+      'Akute hämolytische Anämie (Schwäche, Blässe)',
+      'Hämoglobinurie (roter/brauner Harn)',
+      'Hohes Fieber (40–41°C)',
+      'Ikterus (Gelbsucht)',
+      'Apathie, Fressunlust, Tachykardie',
+      'Schwere Verläufe: Schock, Nierenversagen, DIC'
+    ],
+    therapy:[
+      'Imidocarb-Dipropionat (Imizol®) 6,6 mg/kg s.c., 2 Gaben im Abstand von 2 Wochen',
+      'Atovaquon + Azithromycin bei B. gibsoni',
+      'Supportiv: Infusionen, ggf. Bluttransfusion bei schwerem Verlauf',
+      'Sofortiger Tierarztbesuch bei Verdacht!'
+    ],
+    prevention:'Zeckenschutz (v.a. gegen Dermacentor reticulatus), tägliche Kontrolle',
+    note:'Rasch progredient – bei Verdacht keine 24h zuwarten. Blutbild + Blutausstrich zur Diagnose.'
+  },
+  {
+    id:'anaplasmose',
+    name:'Anaplasmose (Granulozytäre)',
+    ico:'🧫',
+    sev:'medium',
+    sevLabel:'Beachten',
+    region:'Häufig in AT, oft zusammen mit Borreliose',
+    cause:'Anaplasma phagocytophilum, Übertragung durch Ixodes ricinus',
+    symptoms:[
+      'Fieber, Lethargie, Fressunlust',
+      'Thrombozytopenie (Blutungsneigung)',
+      'Lahmheit, Gelenkschmerzen',
+      'Gelegentlich: Erbrechen, Durchfall',
+      'Oft mild, selbstlimitierend'
+    ],
+    therapy:[
+      'Doxycyclin 5–10 mg/kg 2× tägl. für 14–28 Tage',
+      'Rasche klinische Besserung binnen 24–48h typisch',
+      'Bei Thrombozytopenie: keine NSAID, kein Aspirin'
+    ],
+    prevention:'Zeckenprophylaxe, tägliche Kontrolle',
+    note:'Koinfektion mit Borreliose möglich. SNAP 4Dx Plus Test erfasst beide Erreger.'
+  },
+  {
+    id:'leptospirose',
+    name:'Leptospirose',
+    ico:'💧',
+    sev:'high',
+    sevLabel:'Wichtig · Zoonose',
+    region:'Häufig in AT, v.a. nach Kontakt mit Gewässern/Nagern',
+    cause:'Leptospira interrogans (div. Serovare), Übertragung über Urin infizierter Tiere, Gewässer',
+    symptoms:[
+      'Akutes Nierenversagen (PU/PD, Erbrechen, Urämie)',
+      'Lebererkrankung (Ikterus, erhöhte Leberenzyme)',
+      'Fieber, Myalgie, Prostration',
+      'Leptospirose-assoziierte respiratorische Erkrankung (LARE)',
+      'Hämorrhagische Diathese in schweren Fällen'
+    ],
+    therapy:[
+      'Doxycyclin 5 mg/kg 2× tägl. für 14 Tage (Erregerelimination)',
+      'Initial ggf. Ampicillin oder Penicillin i.v. in der akuten Phase',
+      'Intensivtherapie: Infusionen, Nierenschutz',
+      'Dialyse bei schwerem Nierenversagen erwägen'
+    ],
+    prevention:'Impfung! L4-Impfstoff (Nobivac L4) jährlich empfohlen. Kontakt mit Pfützen/Gewässern meiden',
+    note:'Zoonose! Isolierung erkrankter Hunde, Hygiene (Handschuhe bei Urinkontakt). Meldepflichtig beim Menschen.'
+  },
+  {
+    id:'zwingerhusten',
+    name:'Zwingerhusten (CIRD)',
+    ico:'🤧',
+    sev:'low',
+    sevLabel:'Häufig',
+    region:'Überall, v.a. nach Kontakt mit anderen Hunden',
+    cause:'Multifaktoriell: Bordetella bronchiseptica, Parainfluenza (CPiV), Adenovirus Typ 2, Mycoplasma',
+    symptoms:[
+      'Trockener, stakkatohafter Husten (typisch nach Würgen)',
+      'Nasaler Ausfluss (serös bis mukopurulent)',
+      'Milde Fälle: guter Allgemeinzustand trotz Husten',
+      'Schwere Fälle: Fieber, Apathie, Pneumonie möglich'
+    ],
+    therapy:[
+      'Unkompliziert: Ruhe, Hustensedativa (ggf. Butorphanol)',
+      'Bei bakterieller Beteiligung: Doxycyclin 5–10 mg/kg 2× tägl. 7–14 Tage',
+      'Amoxicillin-Clavulansäure bei Pneumonieverdacht',
+      'Inhalationstherapie (Kochsalzlösung) bei zähem Sekret'
+    ],
+    prevention:'Impfung (DHPPi + Bordetella intranasal/oral), Kontaktreduktion bei Ausbrüchen',
+    note:'Inkubationszeit 3–10 Tage. Ansteckend – erkrankte Hunde von anderen Hunden fernhalten.'
+  },
+  {
+    id:'parvovirose',
+    name:'Parvovirose',
+    ico:'⚠️',
+    sev:'high',
+    sevLabel:'Notfall · Lebensbedrohlich',
+    region:'Weltweit, v.a. ungeimpfte Hunde',
+    cause:'Canines Parvovirus Typ 2 (CPV-2), extrem umweltresistent',
+    symptoms:[
+      'Profuses, blutig-schleimiges Erbrechen und Durchfall',
+      'Schwere Dehydratation, Prostration',
+      'Hohes Fieber oder Hypothermie',
+      'Leukopenie (Neutropenie)',
+      'Junge/ungeimpfte Hunde am stärksten betroffen',
+      'Myokarditis (Welpen < 8 Wochen)'
+    ],
+    therapy:[
+      'Intensivtherapie! Hospitalisierung unbedingt erforderlich',
+      'Aggressive Infusionstherapie (kristalloide + kolloidale Lösungen)',
+      'Antibiotika: Ampicillin + Enrofloxacin (Sepsisprophylaxe)',
+      'Antiemetika: Maropitant (Cerenia®)',
+      'Hyperimmunserum (in frühen Stadien)',
+      'Mortalität ohne Therapie 50–90%, mit Intensivtherapie < 10%'
+    ],
+    prevention:'Impfung! Grundimmunisierung + Auffrischung alle 3 Jahre (Kernimpfstoff)',
+    note:'Erreger bis zu 1 Jahr in der Umgebung infektiös. Dekontamination mit 1:30 Bleiche.'
+  },
+  {
+    id:'leishmaniose',
+    name:'Leishmaniose',
+    ico:'🌍',
+    sev:'high',
+    sevLabel:'Reisekrankheit · Zunehmend',
+    region:'Import aus Mittelmeerraum; autochthone Fälle in Süd-AT zunehmend',
+    cause:'Leishmania infantum, Übertragung durch Sandmücken (Phlebotomus spp.)',
+    symptoms:[
+      'Symmetrische periokulare Alopezie (Brillenbildung)',
+      'Schuppende, nicht-juckende Dermatitis',
+      'Epistaxis (Nasenbluten)',
+      'Gewichtsverlust, Muskelatrophie',
+      'Lympadenomegalie, Splenomegalie',
+      'Hyperproteinämie, Proteinurie, Nierenversagen',
+      'Lange Inkubationszeit (Monate bis Jahre!)'
+    ],
+    therapy:[
+      'Meglumin-Antimonat (Glucantime®) 75–100 mg/kg tägl. s.c. 4 Wochen',
+      'Allopurinol 10–20 mg/kg tägl. p.o. (Langzeittherapie, oft lebenslang)',
+      'Miltefosin (Milteforan®) alternativ p.o.',
+      'Heilung selten – Ziel ist klinische Remission und Titerkontrolle'
+    ],
+    prevention:'Sandmückenschutz (Deltamethrin-Halsband Scalibor), Repellents, Impfung (CaniLeish/Letifend)',
+    note:'Zoonose! Infizierte Hunde sind Reservoir für den Menschen. Meldepflicht beachten.'
+  },
+  {
+    id:'dermatitis',
+    name:'Atopische Dermatitis',
+    ico:'🔴',
+    sev:'medium',
+    sevLabel:'Chronisch',
+    region:'Häufig bei Alaskan Klee Kai und Nordischen Rassen',
+    cause:'Genetisch bedingte Überempfindlichkeit gegen Umweltallergene (Milben, Pollen, Schimmel)',
+    symptoms:[
+      'Juckreiz (Pruritus) – oft saisonal oder ganzjährig',
+      'Rötung und Selbsttrauma (Kratzen, Lecken, Beißen)',
+      'Prädilektionsstellen: Pfoten, Leiste, Axilla, Ohrinnenseiten, Periokular',
+      'Sekundäre Pyodermie und Malassezia-Otitis',
+      'Chronisch: Lichenifikation, Hyperpigmentierung'
+    ],
+    therapy:[
+      'Oclacitinib (Apoquel®) – JAK-Inhibitor, schnell wirksam',
+      'Lokivetmab (Cytopoint®) – monoklonaler AK gegen IL-31, 4–8 Wochen Wirkung',
+      'Ciclosporin (Atopica®) – bei chronischen Fällen',
+      'Kortikosteroide – kurzfristig zur Krisisbehandlung',
+      'Allergen-Immuntherapie (ASIT) bei positivem Allergietest',
+      'Hautpflegeprodukte, fettsäurereiche Ernährung'
+    ],
+    prevention:'Regelmäßige Badetherapie, Hautbarrierepflege, Allergenreduktion',
+    note:'Lebenslange Erkrankung. Kombination aus Umweltmanagement, Lokaltherapie und systemischer Therapie meist nötig.'
+  },
+  {
+    id:'otitis',
+    name:'Otitis externa (Ohrentzündung)',
+    ico:'👂',
+    sev:'low',
+    sevLabel:'Sehr häufig',
+    region:'Überall häufig, v.a. bei feuchtem Klima',
+    cause:'Bakteriell (Staphylococcus, Pseudomonas), Malassezia (Hefe), Ohrmilben, anatomisch',
+    symptoms:[
+      'Kopfschütteln, Ohrenkratzen',
+      'Rötung, Schwellung, übler Geruch',
+      'Dunkler/gelblicher/brauner Ausfluss',
+      'Schmerz beim Betasten des Ohres',
+      'Otitis media/interna: Kopfschiefhaltung, Nystagmus, Ataxie'
+    ],
+    therapy:[
+      'Ohrreinigung mit geeignetem Reiniger (Epi-Otic, Douxo)',
+      'Topische Kombipräparate (Antibiotikum + Antimykotikum + Kortison): z.B. Posatex®, Surolan®',
+      'Bei Resistenz: Antibiogramm, Pseudomonas: Enrofloxacin-Ohrtropfen',
+      'Systemische Therapie bei Otitis media',
+      'Ohrmilben: Selamectin (Stronghold) oder Moxidectin'
+    ],
+    prevention:'Regelmäßige Ohrkontrolle, Trocknen nach dem Baden, keine Wattestäbchen in den Gehörgang',
+    note:'Rezidivierende Otitis: immer nach Grundursache suchen (Allergie, Hypothyreose, anatomische Enge).'
+  },
+  {
+    id:'gastroenteritis',
+    name:'Akute Gastroenteritis',
+    ico:'🤢',
+    sev:'medium',
+    sevLabel:'Häufig',
+    region:'Überall',
+    cause:'Multifaktoriell: Futterwechsel, Intoxikation, Infektionen (Campylobacter, Salmonella, Giardia)',
+    symptoms:[
+      'Erbrechen, Durchfall (häufig, oft wässrig)',
+      'Fressunlust, Lethargie',
+      'Bauchschmerzen (Vorsicht beim Abtasten)',
+      'Blutiger Stuhl → Tierarzt sofort',
+      'Dehydrierung bei schwerem Verlauf'
+    ],
+    therapy:[
+      'Kurzes Fasten (12–24h) dann Schonkost (Hühnchen + Reis)',
+      'Probiotika (Fortiflora, Purina Pro Plan EN)',
+      'Oral-Rehydratation oder subkutane Infusion bei Dehydrierung',
+      'Metronidazol 10–15 mg/kg 2× tägl. bei Verdacht auf Giardia/Anaerobier',
+      'Maropitant (Cerenia®) gegen Erbrechen'
+    ],
+    prevention:'Keine Futterumstellung zu rasch, kein Zugang zu Müll/Aas, Giardia-Prophylaxe (Hygiene)',
+    note:'Hämorrhagische Gastroenteritis (HGE): schwere Verlaufsform mit blutigem Erbrechen/Durchfall – sofort zum Tierarzt.'
+  },
+  {
+    id:'hd',
+    name:'Hüftgelenksdysplasie (HD)',
+    ico:'🦴',
+    sev:'medium',
+    sevLabel:'Erblich · Chronisch',
+    region:'Alle Rassen, häufig bei mittelgroßen Hunden',
+    cause:'Multifaktoriell erblich + umweltbedingt (Übergewicht, falsche Belastung im Wachstum)',
+    symptoms:[
+      'Hinterhandschwäche, Watschelgang',
+      'Schmerz beim Aufstehen, nach Ruhe schlimmer',
+      'Ungern Treppen, Sprünge',
+      'Muskelatrophie Hinterhand',
+      'Röntgenologisch: Luxation, Arthrose'
+    ],
+    therapy:[
+      'Konservativ: Gewichtskontrolle, kontrollierte Bewegung (Schwimmen!), Physiotherapie',
+      'NSAIDs: Carprofen, Meloxicam, Mavacoxib (Trocoxil®)',
+      'Gelenksergänzungsmittel: Omega-3, Glucosamin/Chondroitin (begrenzte Evidenz)',
+      'Operativ: Triple Pelvic Osteotomy (jung), Femorkopfresektion, Totalendoprothese'
+    ],
+    prevention:'Röntgenbefundung der Elterntiere, kontrollierter Bewegungsaufbau, Gewichtsmanagement',
+    note:'Alaskan Klee Kai: moderates HD-Risiko. Screening im Zuchtprogramm empfohlen.'
+  },
+  {
+    id:'epilepsie',
+    name:'Idiopathische Epilepsie',
+    ico:'⚡',
+    sev:'high',
+    sevLabel:'Chronisch · Notfall möglich',
+    region:'Genetische Prädisposition bei bestimmten Rassen',
+    cause:'Idiopathisch (genetisch) oder symptomatisch (Tumor, Enzephalitis, metabolisch)',
+    symptoms:[
+      'Tonisch-klonische Anfälle (Zittern, Paddeln, Bewusstlosigkeit)',
+      'Präiktal: Unruhe, Angst, Vokalisieren',
+      'Postikal: Desorientierung, Blindheit, Ataxie (Minuten bis Stunden)',
+      'Cluster-Anfälle: >2 Anfälle/24h → Notfall',
+      'Status epilepticus: Anfall >5 min → Notfall!'
+    ],
+    therapy:[
+      'Phenobarbital 2–5 mg/kg 2× tägl. p.o. (Mittel der Wahl)',
+      'Kaliumbromid als Ergänzung (Spiegel 1–3 mg/ml)',
+      'Levetiracetam (Keppra®) als Add-on oder Alternative',
+      'Notfall: Diazepam rektal/i.v. 0,5 mg/kg',
+      'Regelmäßige Blutspiegelkontrollen erforderlich'
+    ],
+    prevention:'Keine spezifische Prävention. Anfallstagebuch führen, Stressminimierung',
+    note:'Medikamentöse Einstellung braucht Geduld – 3 Monate bis stabile Einstellung. Niemals abrupt absetzen!'
+  },
+  {
+    id:'herzerkrankung',
+    name:'Chronische Herzerkrankung (MMVD)',
+    ico:'❤️',
+    sev:'medium',
+    sevLabel:'Häufig bei älteren Hunden',
+    region:'Häufigste Herzerkrankung beim Hund',
+    cause:'Myxomatöse Mitralklappendegenerierung (MMVD), selten DCM',
+    symptoms:[
+      'Belastungsintoleranz, schnelle Ermüdung',
+      'Husten (v.a. nachts/früh morgens), Dyspnoe',
+      'Synkopen (Ohnmachtsanfälle)',
+      'Tachykardie, Herzgeräusch (Auskultation)',
+      'Aszites, Pleuraerguss bei Herzinsuffizienz'
+    ],
+    therapy:[
+      'Stadium B1: Pimobendan (Vetmedin®) – verlängert asymptomatische Phase',
+      'Stadium B2/C: Diuretika (Furosemid), ACE-Hemmer, Pimobendan',
+      'Stadium D: intensivierte Therapie, Spironolacton',
+      'Aktivitätskontrolle, Natriumarme Diät'
+    ],
+    prevention:'Regelmäßige Herzauskultation beim Tierarzt (ab 5. Lebensjahr), Gewichtskontrolle',
+    note:'ACVIM-Konsensus 2019 empfiehlt Pimobendan bereits im asymptomatischen Stadium B2 (Kardiomegalie nachweisbar).'
+  }
+];
+
+// ================================================================
+//  KRANKHEITEN – RENDER
+// ================================================================
+let disView = 'db';
+
+function setDisView(v, btn) {
+  disView = v;
+  document.querySelectorAll('#dis-toggle .tog').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const addBtn = document.getElementById('dis-add-btn');
+  addBtn.style.display = v==='akte' ? '' : 'none';
+  renderDisease();
+}
+
+function renderDisease() {
+  const el = document.getElementById('dis-list');
+  // Add-Button: nur in Krankenakte sichtbar
+  const addBtn = document.getElementById('dis-add-btn');
+  if(addBtn) addBtn.style.display = disView==='akte' ? '' : 'none';
+
+  if(disView === 'db') {
+    renderDiseaseDB(el);
+  } else {
+    renderHealthRecords(el);
+  }
+}
+
+function renderDiseaseDB(el) {
+  document.getElementById('dis-sub').textContent = `${DISEASE_DB.length} Krankheitsbilder · Wien / Österreich`;
+
+  el.innerHTML = DISEASE_DB.map(d => {
+    const SEV = {high:'sev-high',medium:'sev-medium',low:'sev-low'};
+    const note = D.diseaseNotes?.[d.id] || '';
+    const symHtml = d.symptoms.map(s=>`<div class="disease-tag">${esc(s)}</div>`).join('');
+    const therHtml = d.therapy.map((t,i)=>`<div style="font-size:.82rem;padding:.25rem 0;border-bottom:1px solid var(--border);color:var(--text)">${i+1}. ${esc(t)}</div>`).join('');
+    return `<div class="disease-card">
+      <div class="disease-hdr" onclick="toggleDisease('${d.id}')">
+        <span class="disease-ico">${d.ico}</span>
+        <div style="flex:1;min-width:0">
+          <div class="disease-name">${esc(d.name)}</div>
+          <div style="font-size:.71rem;color:var(--text-3);margin-top:.1rem">${esc(d.region)}</div>
+        </div>
+        <span class="disease-sev ${SEV[d.sev]||''}">${esc(d.sevLabel)}</span>
+        <span class="disease-chevron" id="chev-${d.id}">▼</span>
+      </div>
+      <div class="disease-body" id="dbody-${d.id}">
+        <div class="disease-section-lbl">Ursache / Erreger</div>
+        <div class="disease-text">${esc(d.cause)}</div>
+
+        <div class="disease-section-lbl">Symptomatik</div>
+        <div class="disease-tags">${symHtml}</div>
+
+        <div class="disease-section-lbl">Therapie</div>
+        <div style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden">${therHtml}</div>
+
+        <div class="disease-section-lbl">Prävention</div>
+        <div class="disease-text">${esc(d.prevention)}</div>
+
+        ${d.note ? `<div style="background:var(--amber-pale);border-left:3px solid var(--amber);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:.6rem .8rem;margin-top:.7rem;font-size:.8rem;color:#78350f">
+          💡 ${esc(d.note)}</div>` : ''}
+
+        <div class="disease-note-area">
+          <div class="disease-section-lbl" style="margin-top:0">📝 Meine Notizen zu Diva</div>
+          <textarea placeholder="Eigene Beobachtungen, Recherchen, Links…" onchange="saveDiseaseNote('${d.id}',this.value)">${esc(note)}</textarea>
+          <div style="display:flex;justify-content:flex-end;margin-top:.35rem">
+            <button class="btn btn-secondary btn-sm" onclick="saveDiseaseNote('${d.id}',document.querySelector('#dbody-${d.id} textarea').value)">💾 Notiz speichern</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleDisease(id) {
+  const body = document.getElementById('dbody-'+id);
+  const chev = document.getElementById('chev-'+id);
+  if(!body) return;
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  chev?.classList.toggle('open', !isOpen);
+}
+
+function saveDiseaseNote(id, val) {
+  if(!D.diseaseNotes) D.diseaseNotes = {};
+  D.diseaseNotes[id] = val;
+  save(); toast('✓ Notiz gespeichert');
+}
+
+// ================================================================
+//  KRANKENAKTE
+// ================================================================
+function renderHealthRecords(el) {
+  if(!Array.isArray(D.healthRecords)) D.healthRecords = [];
+  const sorted = [...D.healthRecords].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  document.getElementById('dis-sub').textContent = `${sorted.length} Einträge in Divas Krankenakte`;
+  if(!sorted.length) {
+    el.innerHTML = empty('📋','Noch keine Einträge in der Krankenakte.<br>Dokumentiere Erkrankungen, Verlauf und Fotos.');
+    return;
+  }
+  el.innerHTML = sorted.map(r => {
+    const photos = (r.photos||[]).map((p,i)=>
+      `<img class="photo-thumb" src="${p.data}" alt="${esc(p.name)}" onclick="showLightbox('${r.id}',${i})" title="${esc(p.name)}">`
+    ).join('');
+    return `<div class="card krankenakte-card">
+      <div class="card-hdr">
+        <div>
+          <div class="card-title">${esc(r.diagnosis||'Diagnose unbekannt')}</div>
+          <div class="card-sub">${toDE(r.date)}${r.status?' · <span style="color:'+statusColor(r.status)+'">'+esc(r.status)+'</span>':''}</div>
+        </div>
+        <div class="card-acts">
+          <button class="btn btn-secondary btn-sm" onclick="editHealthRecord('${r.id}')">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="delHealthRecord('${r.id}')">🗑</button>
+        </div>
+      </div>
+      ${r.symptoms?`<div style="font-size:.82rem;margin:.35rem 0"><strong>Symptome:</strong> ${esc(r.symptoms)}</div>`:''}
+      ${r.treatment?`<div style="font-size:.82rem;color:var(--text-2)"><strong>Behandlung:</strong> ${esc(r.treatment)}</div>`:''}
+      ${r.notes?`<div style="font-size:.79rem;color:var(--text-2);margin-top:.35rem;white-space:pre-wrap">${esc(r.notes)}</div>`:''}
+      ${photos?`<div class="photo-grid" style="margin-top:.5rem">${photos}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function statusColor(s) {
+  if(s==='Abgeheilt') return 'var(--green)';
+  if(s==='In Behandlung') return 'var(--amber)';
+  if(s==='Chronisch') return 'var(--terra)';
+  return 'var(--text-2)';
+}
+
+function showLightbox(recordId, photoIdx) {
+  const r = D.healthRecords.find(x=>x.id===recordId);
+  if(!r?.photos?.[photoIdx]) return;
+  const lb = document.createElement('div');
+  lb.className = 'photo-lightbox';
+  lb.onclick = () => lb.remove();
+  lb.innerHTML = `
+    <button class="lightbox-close" onclick="event.stopPropagation();this.parentNode.remove()">✕</button>
+    <img src="${r.photos[photoIdx].data}" alt="${esc(r.photos[photoIdx].name)}">`;
+  document.body.appendChild(lb);
+}
+
+function openDiseaseRecord(pre={}) {
+  const diseaseOpts = DISEASE_DB.map(d=>`<option value="${d.name}"${pre.diagnosis===d.name?' selected':''}>${d.ico} ${d.name}</option>`).join('');
+  const rating = pre.photos || [];
+
+  document.getElementById('modal-body').innerHTML = `
+    <div class="modal-title">📋 Krankheitseintrag</div>
+    <div class="form-grid">
+      <div class="fg"><label>Diagnose / Verdacht *</label>
+        <select id="ff-hr-diag" onchange="onHRDiagChange(this)">
+          <option value="">— bitte wählen —</option>
+          ${diseaseOpts}
+          <option value="__other__"${(!pre.diagnosis||DISEASE_DB.find(d=>d.name===pre.diagnosis))?'':' selected'}>Andere / Freitext</option>
+        </select>
+      </div>
+      <div class="fg" id="ff-hr-diag-other-wrap" style="${(!pre.diagnosis||DISEASE_DB.find(d=>d.name===pre.diagnosis))?'display:none':''}">
+        <label>Diagnose – Freitext</label>
+        <input type="text" id="ff-hr-diag-other" value="${(!pre.diagnosis||DISEASE_DB.find(d=>d.name===pre.diagnosis))?'':esc(pre.diagnosis)}" placeholder="Diagnose eingeben…">
+      </div>
+      <div class="form-row">
+        <div class="fg"><label>Datum *</label><input type="date" id="ff-hr-date" value="${pre.date||today()}"></div>
+        <div class="fg"><label>Status</label>
+          <select id="ff-hr-status">
+            ${['In Behandlung','Abgeheilt','Chronisch','Beobachtung'].map(s=>`<option${pre.status===s?' selected':''}>${s}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="fg"><label>Symptome (beobachtet)</label>
+        <textarea id="ff-hr-symptoms" placeholder="Was habe ich bemerkt…">${esc(pre.symptoms||'')}</textarea></div>
+      <div class="fg"><label>Behandlung / Medikamente</label>
+        <textarea id="ff-hr-treatment" placeholder="Tierarzt, Medikamente, Dosierung…">${esc(pre.treatment||'')}</textarea></div>
+      <div class="fg"><label>Notizen / Recherche</label>
+        <textarea id="ff-hr-notes" placeholder="Eigene Recherche, Links, Verlauf, Beobachtungen…" style="min-height:90px">${esc(pre.notes||'')}</textarea></div>
+      <div class="fg"><label>Fotos / Dokumente hinzufügen</label>
+        <input type="file" id="ff-hr-photos" accept="image/*,.pdf" multiple style="border:none;padding:.2rem 0">
+        <div style="font-size:.72rem;color:var(--text-3)">Mehrfachauswahl möglich (Fotos, PDFs)</div>
+        ${pre.photos?.length ? `<div style="font-size:.76rem;color:var(--green);margin-top:.3rem">✓ ${pre.photos.length} Datei(en) bereits gespeichert</div>` : ''}
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeForm()">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveHealthRecord('${pre.id||''}')">💾 Speichern</button>
+    </div>`;
+
+  document.getElementById('overlay').style.display='flex';
+}
+
+function onHRDiagChange(sel) {
+  const wrap = document.getElementById('ff-hr-diag-other-wrap');
+  if(wrap) wrap.style.display = sel.value==='__other__' ? 'flex' : 'none';
+}
+
+function editHealthRecord(id) {
+  const r = D.healthRecords.find(x=>x.id===id);
+  if(r) openDiseaseRecord(r);
+}
+
+function saveHealthRecord(existingId) {
+  const diagSel = document.getElementById('ff-hr-diag')?.value;
+  const diagOther = document.getElementById('ff-hr-diag-other')?.value.trim();
+  const diagnosis = diagSel==='__other__' ? (diagOther||'Unbekannt') : (diagSel||'');
+  const date = document.getElementById('ff-hr-date')?.value;
+  if(!diagnosis || !date) {
+    if(!diagnosis) document.getElementById('ff-hr-diag').style.borderColor='#ef4444';
+    if(!date) document.getElementById('ff-hr-date').style.borderColor='#ef4444';
+    return;
+  }
+  const entry = {
+    id: existingId || uid(),
+    diagnosis, date,
+    status:    document.getElementById('ff-hr-status')?.value || '',
+    symptoms:  document.getElementById('ff-hr-symptoms')?.value || '',
+    treatment: document.getElementById('ff-hr-treatment')?.value || '',
+    notes:     document.getElementById('ff-hr-notes')?.value || '',
+    photos:    existingId ? (D.healthRecords.find(x=>x.id===existingId)?.photos||[]) : []
+  };
+
+  const fileEl = document.getElementById('ff-hr-photos');
+  const files  = fileEl?.files ? [...fileEl.files] : [];
+
+  if(files.length) {
+    let loaded = 0;
+    files.forEach(f => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        entry.photos.push({ name: f.name, data: e.target.result });
+        loaded++;
+        if(loaded === files.length) finalizeHealthRecord(entry, existingId);
+      };
+      reader.readAsDataURL(f);
+    });
+  } else {
+    finalizeHealthRecord(entry, existingId);
+  }
+}
+
+function finalizeHealthRecord(entry, existingId) {
+  if(!Array.isArray(D.healthRecords)) D.healthRecords = [];
+  if(existingId) {
+    const i = D.healthRecords.findIndex(x=>x.id===existingId);
+    if(i>=0) D.healthRecords[i]=entry; else D.healthRecords.push(entry);
+  } else {
+    D.healthRecords.push(entry);
+  }
+  save(); closeForm(); toast('✓ Gespeichert');
+  disView='akte';
+  document.querySelectorAll('#dis-toggle .tog').forEach((b,i)=>b.classList.toggle('active',i===1));
+  renderDisease();
+}
+
+function delHealthRecord(id) {
+  D.healthRecords = (D.healthRecords||[]).filter(x=>x.id!==id);
+  save(); toast('✓ Gelöscht'); renderDisease();
+}
+
+
+
+// ================================================================
+//  ERZIEHUNG – THEMEN-WISSENSDATENBANK
+// ================================================================
+const TRAIN_TOPICS = [
+  {
+    id:'grundkommandos', ico:'🎯', name:'Grundkommandos (Sit, Platz, Hier, Bleib)',
+    goal:'Solide Basisgehorsamkeit als Fundament für alle weiteren Übungen',
+    phases:[
+      { title:'1. Luring (Lockführung)', text:'Leckerli als Führungsmittel einsetzen. Hund folgt der Hand. Kein Druck, nur Verlockung. Sobald Position erreicht: Markerwort + Belohnung.' },
+      { title:'2. Kommando einführen', text:'Wenn Hund die Bewegung sicher kennt: Kommandowort eine Sekunde VOR der Bewegung einführen (→ Sitz, →Platz). Nie rufen wenn Gehorsam unsicher.' },
+      { title:'3. Luring ausschleichen', text:'Leckerli nicht mehr sichtbar in der Hand, aber Handzeichen bleibt. Dann Handzeichen verkleinern. Belohnung kommt aus der anderen Hand oder Tasche.' },
+      { title:'4. Generalisierung', text:'Gehorsamkeit in verschiedenen Umgebungen üben: Wohnung → Garten → Straße → Park. Erst in ruhiger Umgebung, dann mit Ablenkung.' }
+    ],
+    tips:'3×5 Min täglich > 1×30 Min. Immer auf Erfolgserlebnis enden. Alaskan Klee Kai: sehr intelligent, braucht mentale Herausforderung, neigt zu Eigensinn – kurze, abwechslungsreiche Einheiten.',
+    links:[]
+  },
+  {
+    id:'leinenführigkeit', ico:'🚶', name:'Leinenführigkeit',
+    goal:'Hund geht locker an der Leine, ohne zu ziehen, bleibt beim Halter',
+    phases:[
+      { title:'1. Stop-and-Go', text:'Sobald Leine straff wird: sofort stoppen. Hund kommt zurück / Leine wird locker → weitergehen. Konsequenz zählt, nicht Lautstärke.' },
+      { title:'2. Richtungswechsel', text:'Bei Zug: ohne Kommentar umdrehen und in andere Richtung gehen. Hund lernt: nur lockere Leine = Vorwärtskommen.' },
+      { title:'3. Anlockposition aufbauen', text:'„Bei-Fuß"-Position mit Leckerli belohnen. Hund soll freiwillig Blickkontakt suchen und Seite des Halters bevorzugen.' },
+      { title:'4. Distanzaufbau', text:'Lange Schleppleine (10–15 m) für kontrollierte Freiheit. Rückruf aus der Schleppleine üben, bevor Freilauf gewährt wird.' }
+    ],
+    tips:'Nicht mit dem Hund sprechen oder schimpfen beim Zug – einfach stehenbleiben. Kurze Etappen mit vielen Erfolgen. Ausreichend Schnüffelzeiten einplanen (kein Nase-am-Boden-Verbot).',
+    links:[]
+  },
+  {
+    id:'rueckruf', ico:'📣', name:'Zuverlässiger Rückruf',
+    goal:'Hund kommt auf Ruf sofort zurück – in allen Situationen (lebensrettend!)',
+    phases:[
+      { title:'1. Rückruf-Konditionierung', text:'Rückrufkommando (z.B. „Hier!" oder Pfeife) immer mit Jackpot-Belohnung verknüpfen. Zunächst aus kurzer Distanz in der Wohnung.' },
+      { title:'2. Schleppleine', text:'10–15m Schleppleine im Freien. Rückruf üben bevor Hund in Ablenkung eintaucht. Niemals bestrafen wenn Hund kommt (egal wie lange es gedauert hat).' },
+      { title:'3. Rückruf aus Ablenkung', text:'Systematisch Ablenkungsgrad erhöhen: andere Hunde, Jogger, Wild. Erst sichern, dann loslassen. Party-Recall: 5 Leckerli nacheinander beim Ankommen.' },
+      { title:'4. Freilauf-Übergabe', text:'Rückruf ≠ Ende des Spaßes: nach Rückruf kurz anfassen und wieder loslassen. So verliert der Rückruf nicht seinen negativen Beigeschmack.' }
+    ],
+    tips:'Rückrufkommando heilig halten – niemals rufen wenn man weiß dass Hund nicht kommt. Niemals maßregeln nach Rückruf. Pfeife als konsistentes Signal sehr wirkungsvoll.',
+    links:[]
+  },
+  {
+    id:'alleinbleiben', ico:'🏠', name:'Allein bleiben',
+    goal:'Hund bleibt entspannt alleine zuhause ohne Stress oder Destruktion',
+    phases:[
+      { title:'1. Kurzabwesenheiten', text:'Erst Sekunden, dann Minuten. Hund soll ruhig sein wenn Besitzer zurückkommt (keine große Begrüßungsroutine). Ruhig weggehen und zurückkommen.' },
+      { title:'2. Ausstattung', text:'Beschäftigungsmittel: Kong (gefüllt, eingefroren), Kauartikel. Rückzugsort (Körbchen/Box). Kein Radio oder TV – Stille normalisieren.' },
+      { title:'3. Abreiseritual desensibilisieren', text:'Schlüssel nehmen ohne wegzugehen. Jacke anziehen und setzen. Schuhe anziehen – Pause – wieder ausziehen. Signale entkoppeln.' },
+      { title:'4. Dauer steigern', text:'Sehr langsam auf mehrere Stunden steigern. Niemals frustriert verlassen. Kamera zur Überwachung hilfreich (Furbo, Petcube).' }
+    ],
+    tips:'Alaskan Klee Kai: neigt zu Separation Anxiety – früh üben! Kamerakontrolle zeigt ob Hund wirklich entspannt ist oder nur still leidet.',
+    links:[]
+  },
+  {
+    id:'sozialisierung', ico:'🐕', name:'Sozialisierung & Umwelttraining',
+    goal:'Hund ist souverän gegenüber fremden Menschen, Tieren, Geräuschen und Situationen',
+    phases:[
+      { title:'1. Positiverfahrungen sammeln', text:'Jede neue Situation mit Leckerli und Ruhe verknüpfen. Niemals zwingen – der Hund bestimmt das Tempo. Freiwilliges Nähern belohnen.' },
+      { title:'2. Geräuschdesensibilisierung', text:'Donner, Feuerwerk, Verkehr als Audiodatei abspielen (sehr leise zunächst) beim Spielen/Fressen. Langsam lauter stellen über Wochen.' },
+      { title:'3. Hundebegegnungen', text:'Parallel-Spaziergänge vor direktem Kontakt. Kein Aufeinander-Zulaufen an straffer Leine. Kurzer Kontakt, dann Trennung.' },
+      { title:'4. Menschensozialisation', text:'Verschiedene Typen: Männer mit Bart, Kinder, ältere Menschen, Uniformen. Hund soll Leckerli von Fremden annehmen (zeigt Entspannung).' }
+    ],
+    tips:'Kritische Sozialisierungsphase: 3–16 Wochen. Danach: Erhaltungssozialisation lebenslang. Qualität vor Quantität – ein stressiger Kontakt kann mehr schaden als 10 gute.',
+    links:[]
+  },
+  {
+    id:'impulskontrolle', ico:'🧠', name:'Impulskontrolle',
+    goal:'Hund wartet, bevor er handelt – lernt Frustration zu tolerieren',
+    phases:[
+      { title:'1. „Warte" aufbauen', text:'Leckerli auf Boden legen, Hand drauf. Warten bis Hund sich abwendet → Markerwort → Leckerli freigeben. Dauer langsam steigern.' },
+      { title:'2. Türritual', text:'Hund sitzt und wartet beim Öffnen der Tür. Erst wenn freigegeben (Handzeichen), darf er durch. Geduld: Tür wieder schließen wenn Hund vordrängt.' },
+      { title:'3. Futterkontrolle', text:'Futternapf auf Boden – Hand dazwischen. Wartet Hund? → Leckerli. Zu aggressiv? → Übung abbrechen, kein Bestrafungskonzept.' },
+      { title:'4. Reizablenkung', text:'Hund an Leine, reizvolles Objekt in Sichtweite. Hund der zum Halter schaut → Jackpot. Name ansprechen → Blickkontakt = Ziel.' }
+    ],
+    tips:'Impulskontrolle ist Grundlage für Leinenführigkeit, Rückruf und Entspannung. Täglich 5 Min in Alltagssituationen einbauen (vor dem Fressen, vor dem Rausgehen).',
+    links:[]
+  },
+  {
+    id:'clickertraining', ico:'🖱️', name:'Clickertraining & Marker-Training',
+    goal:'Präzise Kommunikation durch Markersignal – schnelleres, klareres Lernen',
+    phases:[
+      { title:'1. Clicker konditionieren', text:'Click → sofort Leckerli (10–20× wiederholen). Hund lernt: Click = Belohnung kommt. Timing ist alles: Click exakt im Moment des richtigen Verhaltens.' },
+      { title:'2. Shaping', text:'Verhalten in kleine Schritte zerlegen. Hund exploriert – jede Annäherung ans Ziel wird geklickt. Kein Luring, nur Warten und Markieren.' },
+      { title:'3. Wort-Clicker-Kombination', text:'Markerwort („Ja!", „Super!") kann Clicker ersetzen, wenn timing sicher. Clicker für Feinarbeit (Tricks), Markerwort für Alltag.' },
+      { title:'4. Verhaltensformung', text:'Kette von Verhaltensweisen verknüpfen. Erst B trainieren, dann A→B. Rückwärtsverkettung für komplexe Übungen sehr effektiv.' }
+    ],
+    tips:'Niemals Clicker als Aufmerksamkeitssignal benutzen (nur als Markierer nach Verhalten). Clicker-Session max. 5 Min – geistig sehr anstrengend.',
+    links:[]
+  },
+  {
+    id:'tricks', ico:'⭐', name:'Tricks & Mentale Beschäftigung',
+    goal:'Geistige Auslastung, Vertrauensaufbau, Spaß – erschöpft mehr als körperliche Bewegung',
+    phases:[
+      { title:'Trick 1: Pfote / Shake', text:'Hand hinhalten, Hund hebt Pfote → Click + Belohnung. Kommando erst nach 10× sicherem Verhalten einführen.' },
+      { title:'Trick 2: Drehen / Spin', text:'Leckerli kreisförmig vor der Nase führen (Links/Rechts getrennt einführen). Hand verkleinern, dann Kommando.' },
+      { title:'Trick 3: Versteckspiele', text:'Leckerli unter Bechern verstecken – Hund zeigt an. Steigern auf Zimmer-Suche nach Leckerli, danach Nasenarbeit (Mantrailing leicht).' },
+      { title:'Trick 4: Nasenarbeit', text:'Box mit bekanntem Duft → suchen. Sehr erschöpfend, sehr befriedigend. 15 Min Nasenarbeit = 2h körperliche Bewegung (Faustregel).' }
+    ],
+    tips:'Regentage: perfekt für Trick-Sessions. Klee Kai lieben Nasenarbeit und Suchspiele. Apportieren trainieren schafft Kooperation ohne Dominanz-Dynamik.',
+    links:[]
+  },
+  {
+    id:'aggression', ico:'⚠️', name:'Angst & reaktives Verhalten',
+    goal:'Hund reagiert ruhiger auf Trigger (andere Hunde, Fremde, Geräusche)',
+    phases:[
+      { title:'1. Schwelle identifizieren', text:'Distanz bestimmen bei der Hund noch unter Schwelle reagiert. Nur unterhalb dieser Distanz arbeiten. Über Schwelle = kein Lernen möglich.' },
+      { title:'2. Gegenkonditionierung', text:'Trigger erscheint → sofort Jackpot-Leckerli (unabhängig vom Verhalten). Assoziation: Trigger = tolle Dinge passieren.' },
+      { title:'3. Look-at-That (LAT)', text:'Hund schaut auf Trigger → Click + Belohnung. Hund lernt: ruhiges Anschauen des Triggers = Belohnung. Aufmerksamkeit kontrollieren.' },
+      { title:'4. Distanz verringern', text:'Nur wenn Hund stabil unter Schwelle reagiert: vorsichtig annähern (cm-Weise). Kein Zeitdruck. Rückschritte sind normal.' }
+    ],
+    tips:'Bei schwerer Reaktivität: Verhaltenstherapeut hinzuziehen. Medikamentöse Unterstützung (z.B. Dexmedetomidin, Fluoxetin) kann Lernprozess ermöglichen. Nie mit Strafe arbeiten.',
+    links:[]
+  },
+  {
+    id:'transport', ico:'🚗', name:'Transport & Reise',
+    goal:'Hund ist entspannt im Auto, in der Box, bei Tierarztbesuchen',
+    phases:[
+      { title:'1. Box-Training', text:'Transportbox = positiver Ort. Leckerli hineinwerfen, niemals einsperren anfangs. Mahlzeiten vor der Box, dann in der Box füttern.' },
+      { title:'2. Autofahrten', text:'Kurze Fahrten zuerst (5 Min), kein negatives Erlebnis am Ende (kein Tierarzt anfangs). Langsam steigern. Lüftung, keine Hitze.' },
+      { title:'3. Tierarzt-Desensibilisierung', text:'Zufallsbesuche nur zum Leckerli holen (nicht Behandlung). Waage, Tisch, Betasten üben zuhause. Maulkorbtraining prophylaktisch.' },
+      { title:'4. Übernachtung / Hotel', text:'Eigenes Körbchen mitbringen. Bekannte Gerüche reduzieren Stress. Erste Nächte mit Besitzer-Kleidungsstück im Bett.' }
+    ],
+    tips:'Reisekrankheit: 2h vor Fahrt nicht füttern. Adaptil-Spray in Box. Bei Übelkeit: Cerenia® (Maropitant) vom Tierarzt.',
+    links:[]
+  }
+];
+
+// ================================================================
+//  ERZIEHUNG – RENDER
+// ================================================================
+let trainView = 'topics';
+let trainStepCount = 0;
+let trainLinkCount = 0;
+
+function setTrainView(v, btn) {
+  trainView = v;
+  document.querySelectorAll('#train-toggle .tog').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const addBtn = document.getElementById('train-add-btn');
+  if(addBtn) {
+    addBtn.style.display = v==='topics' ? 'none' : '';
+    addBtn.textContent = v==='log' ? '+ Trainingseinheit' : v==='docs' ? '+ Dokument' : '+ Übung';
+    addBtn.onclick = v==='log' ? openSessionForm : v==='docs' ? openDocForm : openExerciseForm;
+  }
+  renderTraining();
+}
+
+function renderTraining() {
+  const el = document.getElementById('train-list');
+  const addBtn = document.getElementById('train-add-btn');
+  if(addBtn) {
+    addBtn.style.display = trainView==='topics' ? 'none' : '';
+    addBtn.textContent = trainView==='log' ? '+ Trainingseinheit' : trainView==='docs' ? '+ Dokument' : '+ Übung';
+    addBtn.onclick = trainView==='log' ? openSessionForm : trainView==='docs' ? openDocForm : openExerciseForm;
+  }
+  if(trainView==='topics')         renderTrainTopics(el);
+  else if(trainView==='exercises') renderExercises(el);
+  else if(trainView==='docs')      renderTrainDocs(el);
+  else                             renderTrainLog(el);
+}
+
+// ── Themen ──────────────────────────────────────────────────────
+function renderTrainTopics(el) {
+  document.getElementById('train-sub').textContent =
+    `${TRAIN_TOPICS.length} Themen · ${(D.exercises||[]).length} eigene Übungen · ${(D.trainingSessions||[]).length} Einheiten geloggt`;
+
+  el.innerHTML = TRAIN_TOPICS.map(t => {
+    const note = D.trainingTopicNotes?.[t.id] || '';
+    const phasesHtml = t.phases.map(p=>`
+      <div class="tt-phase">
+        <div class="tt-phase-title">${esc(p.title)}</div>
+        <div class="tt-phase-text">${esc(p.text)}</div>
+      </div>`).join('');
+
+    return `<div class="train-topic-card">
+      <div class="train-topic-hdr" onclick="toggleTrainTopic('${t.id}')">
+        <span class="train-topic-ico">${t.ico}</span>
+        <span class="train-topic-name">${esc(t.name)}</span>
+        <span class="disease-chevron" id="tchev-${t.id}">▼</span>
+      </div>
+      <div class="train-topic-body" id="tbody-${t.id}">
+        <div class="tt-goal">🎯 Ziel: ${esc(t.goal)}</div>
+        ${phasesHtml}
+        <div class="tt-tip">💡 ${esc(t.tips)}</div>
+        <div class="disease-note-area" style="margin-top:.9rem">
+          <div class="disease-section-lbl" style="margin-top:0">📝 Meine Notizen / Divas Fortschritt</div>
+          <textarea placeholder="Was klappt gut? Was üben wir noch? Beobachtungen…"
+            onchange="saveTrainTopicNote('${t.id}',this.value)">${esc(note)}</textarea>
+          <div style="display:flex;justify-content:flex-end;margin-top:.35rem">
+            <button class="btn btn-secondary btn-sm"
+              onclick="saveTrainTopicNote('${t.id}',document.querySelector('#tbody-${t.id} textarea').value)">
+              💾 Notiz speichern
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleTrainTopic(id) {
+  const body = document.getElementById('tbody-'+id);
+  const chev = document.getElementById('tchev-'+id);
+  if(!body) return;
+  const open = body.classList.toggle('open');
+  chev?.classList.toggle('open', open);
+}
+
+function saveTrainTopicNote(id, val) {
+  if(!D.trainingTopicNotes) D.trainingTopicNotes = {};
+  D.trainingTopicNotes[id] = val;
+  save(); toast('✓ Notiz gespeichert');
+}
+
+// ── Übungen ─────────────────────────────────────────────────────
+function renderExercises(el) {
+  if(!Array.isArray(D.exercises)) D.exercises = [];
+  document.getElementById('train-sub').textContent = `${D.exercises.length} eigene Übungen`;
+  if(!D.exercises.length) {
+    el.innerHTML = empty('🎯','Noch keine Übungen gespeichert.<br>Beschreibe Übungen aus der Hundeschule als Schritt-für-Schritt-Anleitung.');
+    return;
+  }
+  const DIFF = {easy:'diff-easy',medium:'diff-medium',hard:'diff-hard'};
+  const DIFFL = {easy:'Anfänger',medium:'Fortgeschritten',hard:'Profi'};
+  el.innerHTML = [...D.exercises].sort((a,b)=>(a.name||'').localeCompare(b.name||'')).map(ex => {
+    const stepsHtml = (ex.steps||[]).map((s,i)=>`
+      <div class="exercise-step">
+        <div class="exercise-step-num">${i+1}</div>
+        <div style="font-size:.82rem;line-height:1.6">${esc(s)}</div>
+      </div>`).join('');
+    const linksHtml = (ex.links||[]).map(l=>`
+      <div class="ex-link-row">
+        <span style="font-size:.9rem">${l.type==='video'?'▶️':l.type==='app'?'📱':'🔗'}</span>
+        <a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label||l.url)}</a>
+        <span class="chip gray" style="font-size:.66rem">${esc(l.type)}</span>
+      </div>`).join('');
+    return `<div class="card">
+      <div class="card-hdr">
+        <div style="flex:1;min-width:0">
+          <div class="card-title">${esc(ex.name)}</div>
+          <div class="card-meta" style="margin-top:.25rem">
+            ${ex.category?`<span class="chip gray">${esc(ex.category)}</span>`:''}
+            ${ex.diff?`<span class="ex-diff ${DIFF[ex.diff]||''}">${DIFFL[ex.diff]||ex.diff}</span>`:''}
+            ${ex.duration?`<span class="chip gray">⏱ ${esc(ex.duration)} Min</span>`:''}
+          </div>
+        </div>
+        <div class="card-acts">
+          <button class="btn btn-secondary btn-sm" onclick="editExercise('${ex.id}')">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="delExercise('${ex.id}')">🗑</button>
+        </div>
+      </div>
+      ${ex.goal?`<div style="font-size:.8rem;color:var(--green);margin-bottom:.4rem">🎯 ${esc(ex.goal)}</div>`:''}
+      ${stepsHtml}
+      ${linksHtml}
+      ${ex.notes?`<div style="font-size:.78rem;color:var(--text-2);margin-top:.5rem;white-space:pre-wrap">${esc(ex.notes)}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function openExerciseForm(pre={}) {
+  trainStepCount = 0; trainLinkCount = 0;
+  const catOpts = ['Grundgehorsam','Leinenführigkeit','Rückruf','Tricks','Impulskontrolle',
+    'Nasenarbeit','Sozialisierung','Allein bleiben','Sonstiges']
+    .map(c=>`<option${pre.category===c?' selected':''}>${c}</option>`).join('');
+
+  document.getElementById('modal-body').innerHTML = `
+    <div class="modal-title">🎯 Übung erfassen</div>
+    <div class="form-grid">
+      <div class="fg"><label>Name der Übung *</label>
+        <input type="text" id="ff-ex-name" value="${esc(pre.name||'')}" placeholder="z.B. Platz aus dem Sitz"></div>
+      <div class="form-row">
+        <div class="fg"><label>Kategorie</label><select id="ff-ex-cat">${catOpts}</select></div>
+        <div class="fg"><label>Schwierigkeit</label>
+          <select id="ff-ex-diff">
+            <option value="easy"${pre.diff==='easy'?' selected':''}>Anfänger</option>
+            <option value="medium"${pre.diff==='medium'?' selected':''}>Fortgeschritten</option>
+            <option value="hard"${pre.diff==='hard'?' selected':''}>Profi</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="fg"><label>Ziel</label>
+          <input type="text" id="ff-ex-goal" value="${esc(pre.goal||'')}" placeholder="Was soll der Hund lernen?"></div>
+        <div class="fg"><label>Dauer (Min/Einheit)</label>
+          <input type="number" id="ff-ex-dur" value="${esc(pre.duration||'')}" placeholder="5" min="1" max="60"></div>
+      </div>
+
+      <div class="fg">
+        <label>Schritt-für-Schritt Ablauf</label>
+        <div id="steps-container">
+          ${(pre.steps||[]).map((s,i)=>stepEditorRow(i,s)).join('')}
+        </div>
+        <button class="btn btn-secondary btn-sm" style="margin-top:.35rem" onclick="addStep()">+ Schritt</button>
+      </div>
+
+      <div class="fg">
+        <label>Links (Videos, Apps, Webseiten)</label>
+        <div id="links-container">
+          ${(pre.links||[]).map((l,i)=>linkEditorRow(i,l)).join('')}
+        </div>
+        <button class="btn btn-secondary btn-sm" style="margin-top:.35rem" onclick="addLink()">+ Link</button>
+      </div>
+
+      <div class="fg"><label>Notizen</label>
+        <textarea id="ff-ex-notes" placeholder="Tipps, Beobachtungen, Quellen…">${esc(pre.notes||'')}</textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeForm()">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveExercise('${pre.id||''}')">💾 Speichern</button>
+    </div>`;
+
+  trainStepCount = (pre.steps||[]).length;
+  trainLinkCount = (pre.links||[]).length;
+  document.getElementById('overlay').style.display='flex';
+}
+
+function stepEditorRow(i, val='') {
+  return `<div class="step-editor-row" id="step-row-${i}">
+    <input type="text" id="ff-step-${i}" placeholder="Schritt ${i+1} beschreiben…" value="${esc(val)}">
+    <button class="step-del-btn" onclick="removeStep(${i})">✕</button>
+  </div>`;
+}
+
+function linkEditorRow(i, l={}) {
+  const typeOpts = ['video','app','webseite'].map(t=>`<option value="${t}"${(l.type||'video')===t?' selected':''}>${t.charAt(0).toUpperCase()+t.slice(1)}</option>`).join('');
+  return `<div class="link-editor-row" id="link-row-${i}">
+    <select id="ff-link-type-${i}" style="padding:.45rem .5rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--fn-body);font-size:.8rem;background:var(--surface)">${typeOpts}</select>
+    <input type="text" id="ff-link-label-${i}" placeholder="Bezeichnung" value="${esc(l.label||'')}">
+    <input type="url"  id="ff-link-url-${i}"   placeholder="https://…"   value="${esc(l.url||'')}">
+    <button class="step-del-btn" onclick="removeLink(${i})">✕</button>
+  </div>`;
+}
+
+function addStep() {
+  const c = document.getElementById('steps-container');
+  const row = document.createElement('div');
+  row.innerHTML = stepEditorRow(trainStepCount++);
+  c.appendChild(row.firstElementChild);
+}
+
+function removeStep(i) {
+  document.getElementById('step-row-'+i)?.remove();
+}
+
+function addLink() {
+  const c = document.getElementById('links-container');
+  const row = document.createElement('div');
+  row.innerHTML = linkEditorRow(trainLinkCount++);
+  c.appendChild(row.firstElementChild);
+}
+
+function removeLink(i) {
+  document.getElementById('link-row-'+i)?.remove();
+}
+
+function saveExercise(existingId) {
+  const name = document.getElementById('ff-ex-name')?.value.trim();
+  if(!name) { document.getElementById('ff-ex-name').style.borderColor='#ef4444'; return; }
+
+  // Collect steps
+  const steps = [];
+  document.querySelectorAll('#steps-container input[id^="ff-step-"]').forEach(el => {
+    if(el.value.trim()) steps.push(el.value.trim());
+  });
+
+  // Collect links
+  const links = [];
+  document.querySelectorAll('#links-container .link-editor-row').forEach(row => {
+    const id = row.id.replace('link-row-','');
+    const url = document.getElementById(`ff-link-url-${id}`)?.value.trim();
+    if(url) links.push({
+      type:  document.getElementById(`ff-link-type-${id}`)?.value || 'webseite',
+      label: document.getElementById(`ff-link-label-${id}`)?.value.trim() || url,
+      url
+    });
+  });
+
+  const entry = {
+    id: existingId || uid(),
+    name,
+    category: document.getElementById('ff-ex-cat')?.value || '',
+    diff:     document.getElementById('ff-ex-diff')?.value || 'easy',
+    goal:     document.getElementById('ff-ex-goal')?.value || '',
+    duration: document.getElementById('ff-ex-dur')?.value || '',
+    steps, links,
+    notes: document.getElementById('ff-ex-notes')?.value || ''
+  };
+
+  if(!Array.isArray(D.exercises)) D.exercises = [];
+  if(existingId) {
+    const i = D.exercises.findIndex(x=>x.id===existingId);
+    if(i>=0) D.exercises[i]=entry; else D.exercises.push(entry);
+  } else { D.exercises.push(entry); }
+  save(); closeForm(); toast('✓ Übung gespeichert');
+  trainView='exercises';
+  document.querySelectorAll('#train-toggle .tog').forEach((b,i)=>b.classList.toggle('active',i===1));
+  renderTraining();
+}
+
+function editExercise(id) {
+  const ex = D.exercises.find(x=>x.id===id);
+  if(ex) openExerciseForm(ex);
+}
+
+function delExercise(id) {
+  D.exercises = (D.exercises||[]).filter(x=>x.id!==id);
+  save(); toast('✓ Gelöscht'); renderExercises(document.getElementById('train-list'));
+}
+
+// ── Training-Log ─────────────────────────────────────────────────
+function renderTrainLog(el) {
+  if(!Array.isArray(D.trainingSessions)) D.trainingSessions = [];
+  const sessions = [...D.trainingSessions].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  document.getElementById('train-sub').textContent = `${sessions.length} Trainingseinheiten`;
+
+  // Stats
+  const totalMin = sessions.reduce((s,x)=>s+(parseInt(x.duration)||0),0);
+  const lastWeek = sessions.filter(x=>x.date&&daysAway(x.date)>=-7).length;
+  const avgMood  = sessions.length
+    ? Math.round(sessions.reduce((s,x)=>s+(parseInt(x.mood)||3),0)/sessions.length) : 0;
+  const moodEmoji = ['','😞','😐','🙂','😊','🤩'][avgMood] || '—';
+
+  el.innerHTML = `
+    <div class="log-stat-row">
+      <div class="log-stat"><div class="log-stat-val">${sessions.length}</div><div class="log-stat-label">Einheiten gesamt</div></div>
+      <div class="log-stat"><div class="log-stat-val">${totalMin}<span style="font-size:.75rem">Min</span></div><div class="log-stat-label">Training gesamt</div></div>
+      <div class="log-stat"><div class="log-stat-val">${lastWeek}</div><div class="log-stat-label">Letzte 7 Tage</div></div>
+    </div>
+    ${sessions.length ? '' : empty('📊','Noch keine Trainingseinheiten geloggt.<br>Jede Einheit zählt!')}
+    ${sessions.map(s => {
+      const MOODS = ['','😞','😐','🙂','😊','🤩'];
+      const exNames = (s.exercises||[]).join(' · ');
+      return `<div class="card">
+        <div class="card-hdr">
+          <div>
+            <div class="card-title" style="display:flex;align-items:center;gap:.5rem">
+              <span class="session-mood">${MOODS[s.mood]||'🙂'}</span>
+              ${toDE(s.date)}${s.duration?` · ${s.duration} Min`:''}
+            </div>
+            ${exNames?`<div class="card-sub">${esc(exNames)}</div>`:''}
+          </div>
+          <div class="card-acts">
+            <button class="btn btn-secondary btn-sm" onclick="editSession('${s.id}')">✏️</button>
+            <button class="btn btn-danger btn-sm" onclick="delSession('${s.id}')">🗑</button>
+          </div>
+        </div>
+        ${s.location?`<div class="card-meta"><span class="chip gray">📍 ${esc(s.location)}</span></div>`:''}
+        ${s.notes?`<div style="font-size:.8rem;color:var(--text-2);margin-top:.35rem;white-space:pre-wrap">${esc(s.notes)}</div>`:''}
+      </div>`;
+    }).join('')}`;
+}
+
+function openSessionForm(pre={}) {
+  const savedExercises = Array.isArray(pre.exercises) ? pre.exercises.join('\n') : (pre.exercises||'');
+
+  document.getElementById('modal-body').innerHTML = `
+    <div class="modal-title">📊 Trainingseinheit</div>
+    <div class="form-grid">
+      <div class="form-row">
+        <div class="fg"><label>Datum *</label>
+          <input type="date" id="ff-sess-date" value="${pre.date||today()}"></div>
+        <div class="fg"><label>Dauer (Min)</label>
+          <input type="number" id="ff-sess-dur" value="${pre.duration||''}" placeholder="15" min="1"></div>
+      </div>
+      <div class="fg"><label>Trainierte Übungen</label>
+        <textarea id="ff-sess-exfree"
+          placeholder="Jede Übung in eine Zeile, z.B.:&#10;Sitz aus dem Stehen&#10;Platz – Dauer auf 10 Sek. gesteigert&#10;Rückruf mit Schleppleine&#10;Leckerli-Suche im Garten"
+          style="min-height:130px">${esc(savedExercises)}</textarea>
+      </div>
+      <div class="fg"><label>Ort</label>
+        <input type="text" id="ff-sess-loc" value="${esc(pre.location||'')}"
+          placeholder="z.B. Prater, Wohnung, Hundeschule Wien 3"></div>
+      <div class="fg"><label>Stimmung / Erfolg</label>
+        <div style="display:flex;gap:.75rem;margin-top:.3rem;align-items:center">
+          ${[1,2,3,4,5].map(n=>`
+            <span class="mood-opt" data-val="${n}" onclick="selectMood(${n})"
+              style="font-size:1.6rem;cursor:pointer;opacity:${(pre.mood||3)>=n?1:.3};transition:opacity .15s,transform .1s"
+              title="${['','Schlecht','Mäßig','Okay','Gut','Super!'][n]}">
+              ${'😞😐🙂😊🤩'[n-1]}
+            </span>`).join('')}
+          <span id="mood-label" style="font-size:.8rem;color:var(--text-2);margin-left:.25rem">
+            ${['','Schlecht','Mäßig','Okay','Gut','Super!'][pre.mood||3]}
+          </span>
+        </div>
+        <input type="hidden" id="ff-sess-mood" value="${pre.mood||3}">
+      </div>
+      <div class="fg"><label>Notizen / Beobachtungen</label>
+        <textarea id="ff-sess-notes"
+          placeholder="Was lief besonders gut?&#10;Was braucht noch mehr Übung?&#10;Besondere Situationen, Reaktionen, Fortschritte…"
+          style="min-height:100px">${esc(pre.notes||'')}</textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeForm()">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveSession('${pre.id||''}')">💾 Speichern</button>
+    </div>`;
+
+  document.getElementById('overlay').style.display='flex';
+}
+
+function selectMood(n) {
+  document.getElementById('ff-sess-mood').value = n;
+  const lbl = document.getElementById('mood-label');
+  if(lbl) lbl.textContent = ['','Schlecht','Mäßig','Okay','Gut','Super!'][n] || '';
+  document.querySelectorAll('.mood-opt').forEach(el => {
+    el.style.opacity = parseInt(el.dataset.val) <= n ? '1' : '0.3';
+    el.style.transform = parseInt(el.dataset.val) === n ? 'scale(1.25)' : 'scale(1)';
+  });
+}
+
+function saveSession(existingId) {
+  const date = document.getElementById('ff-sess-date')?.value;
+  if(!date) { document.getElementById('ff-sess-date').style.borderColor='#ef4444'; return; }
+
+  // Exercises: aus Freitext-Textarea (eine pro Zeile)
+  const freeText = document.getElementById('ff-sess-exfree')?.value || '';
+  const exercises = freeText.split('\n').map(s=>s.trim()).filter(Boolean);
+
+  const entry = {
+    id:       existingId || uid(),
+    date,
+    duration: document.getElementById('ff-sess-dur')?.value || '',
+    exercises,
+    location: document.getElementById('ff-sess-loc')?.value || '',
+    mood:     parseInt(document.getElementById('ff-sess-mood')?.value) || 3,
+    notes:    document.getElementById('ff-sess-notes')?.value || ''
+  };
+
+  if(!Array.isArray(D.trainingSessions)) D.trainingSessions = [];
+  if(existingId) {
+    const i = D.trainingSessions.findIndex(x=>x.id===existingId);
+    if(i>=0) D.trainingSessions[i]=entry; else D.trainingSessions.push(entry);
+  } else { D.trainingSessions.push(entry); }
+  save(); closeForm(); toast('✓ Einheit gespeichert');
+  trainView='log';
+  document.querySelectorAll('#train-toggle .tog').forEach((b,i)=>b.classList.toggle('active',i===2));
+  renderTraining();
+}
+
+function editSession(id) {
+  const s = D.trainingSessions.find(x=>x.id===id);
+  if(s) openSessionForm(s);
+}
+
+function delSession(id) {
+  D.trainingSessions = (D.trainingSessions||[]).filter(x=>x.id!==id);
+  save(); toast('✓ Gelöscht'); renderTrainLog(document.getElementById('train-list'));
+}
+
+// ================================================================
+//  ERZIEHUNG – DOKUMENTE
+// ================================================================
+const DOC_CATS = ['Hundeschule-Unterlagen','Übungsblätter','Videos / Links','Bücher / Artikel',
+  'Trainingsplan','Zertifikate','Sonstiges'];
+
+function renderTrainDocs(el) {
+  if(!Array.isArray(D.trainingDocs)) D.trainingDocs = [];
+  const docs = [...D.trainingDocs].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  document.getElementById('train-sub').textContent = `${docs.length} Dokumente`;
+
+  if(!docs.length) {
+    el.innerHTML = empty('📄','Noch keine Dokumente gespeichert.<br>Unterlagen aus der Hundeschule, Übungsblätter, Links oder PDFs hier ablegen.');
+    return;
+  }
+
+  // Nach Kategorie gruppieren
+  const groups = {};
+  docs.forEach(d => {
+    const cat = d.category || 'Sonstiges';
+    if(!groups[cat]) groups[cat] = [];
+    groups[cat].push(d);
+  });
+
+  el.innerHTML = Object.entries(groups).map(([cat, items]) => `
+    <div style="margin-bottom:1.1rem">
+      <div style="font-size:.72rem;font-weight:700;color:var(--text-3);text-transform:uppercase;
+        letter-spacing:.07em;margin-bottom:.45rem;display:flex;align-items:center;gap:.5rem">
+        ${esc(cat)}
+        <span style="background:var(--surface-2);color:var(--text-3);border-radius:20px;
+          padding:.1rem .5rem;font-size:.68rem">${items.length}</span>
+      </div>
+      ${items.map(doc => docCard(doc)).join('')}
+    </div>`).join('');
+}
+
+function docCard(doc) {
+  const isFile  = !!doc.fileData;
+  const isLink  = !!doc.url && !isFile;
+  const isPDF   = isFile && doc.fileName?.toLowerCase().endsWith('.pdf');
+  const isImage = isFile && /\.(jpg|jpeg|png|gif|webp)$/i.test(doc.fileName||'');
+  const ico = isPDF ? '📑' : isImage ? '🖼️' : isLink ? '🔗' : '📄';
+
+  return `<div class="card" style="margin-bottom:.5rem">
+    <div class="card-hdr">
+      <div style="display:flex;align-items:flex-start;gap:.6rem;flex:1;min-width:0">
+        <span style="font-size:1.2rem;flex-shrink:0">${ico}</span>
+        <div style="flex:1;min-width:0">
+          <div class="card-title">${esc(doc.title)}</div>
+          <div class="card-sub">${toDE(doc.date)}${doc.source?' · '+esc(doc.source):''}</div>
+        </div>
+      </div>
+      <div class="card-acts">
+        ${isFile ? `<button class="btn btn-secondary btn-sm" onclick="downloadTrainDoc('${doc.id}')">⬇</button>` : ''}
+        ${isLink ? `<a class="btn btn-secondary btn-sm" href="${esc(doc.url)}" target="_blank" rel="noopener">🌐</a>` : ''}
+        <button class="btn btn-secondary btn-sm" onclick="editTrainDoc('${doc.id}')">✏️</button>
+        <button class="btn btn-danger btn-sm" data-id="${doc.id}" onclick="delTrainDoc(this.dataset.id)">🗑</button>
+      </div>
+    </div>
+    ${isImage ? `<img src="${doc.fileData}" alt="${esc(doc.fileName)}"
+      style="max-width:100%;max-height:220px;object-fit:contain;border-radius:6px;margin-top:.5rem;cursor:zoom-in"
+      onclick="showDocLightbox('${doc.id}')">` : ''}
+    ${doc.notes ? `<div style="font-size:.79rem;color:var(--text-2);margin-top:.45rem;white-space:pre-wrap">${esc(doc.notes)}</div>` : ''}
+    <div class="card-meta" style="margin-top:.4rem">
+      ${doc.tags ? doc.tags.split(',').map(t=>t.trim()).filter(Boolean)
+          .map(t=>`<span class="chip gray">${esc(t)}</span>`).join('') : ''}
+    </div>
+  </div>`;
+}
+
+function openDocForm(pre={}) {
+  const catOpts = DOC_CATS.map(c=>`<option${(pre.category||'Hundeschule-Unterlagen')===c?' selected':''}>${c}</option>`).join('');
+  const hasFile = !!pre.fileData;
+
+  document.getElementById('modal-body').innerHTML = `
+    <div class="modal-title">📄 Dokument / Ressource</div>
+    <div class="form-grid">
+      <div class="fg"><label>Titel *</label>
+        <input type="text" id="ff-doc-title" value="${esc(pre.title||'')}"
+          placeholder="z.B. Übungsblatt Sitz & Platz – Einheit 3"></div>
+      <div class="form-row">
+        <div class="fg"><label>Kategorie</label>
+          <select id="ff-doc-cat">${catOpts}</select></div>
+        <div class="fg"><label>Datum</label>
+          <input type="date" id="ff-doc-date" value="${pre.date||today()}"></div>
+      </div>
+      <div class="fg"><label>Datei hochladen (PDF, Bild, Word…)</label>
+        <input type="file" id="ff-doc-file"
+          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.webp,.txt,.md"
+          style="border:none;padding:.2rem 0">
+        ${hasFile?`<div style="font-size:.76rem;color:var(--green);margin-top:.25rem">
+          ✓ Gespeichert: ${esc(pre.fileName||'Datei')}</div>`:''}
+      </div>
+      <div class="fg"><label>Oder Link (URL)</label>
+        <input type="url" id="ff-doc-url" value="${esc(pre.url||'')}"
+          placeholder="https://youtube.com/… oder App-Store-Link"></div>
+      <div class="fg"><label>Quelle / Hundeschule</label>
+        <input type="text" id="ff-doc-source" value="${esc(pre.source||'')}"
+          placeholder="z.B. Hundeschule Müller, YouTube-Kanal…"></div>
+      <div class="fg"><label>Tags (kommagetrennt)</label>
+        <input type="text" id="ff-doc-tags" value="${esc(pre.tags||'')}"
+          placeholder="z.B. Sitz, Anfänger, Übungsblatt"></div>
+      <div class="fg"><label>Notizen</label>
+        <textarea id="ff-doc-notes"
+          placeholder="Kommentare, was gut funktioniert hat, nächste Schritte…"
+          style="min-height:80px">${esc(pre.notes||'')}</textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeForm()">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveTrainDoc('${pre.id||''}')">💾 Speichern</button>
+    </div>`;
+
+  document.getElementById('overlay').style.display='flex';
+}
+
+function saveTrainDoc(existingId) {
+  const title = document.getElementById('ff-doc-title')?.value.trim();
+  if(!title) { document.getElementById('ff-doc-title').style.borderColor='#ef4444'; return; }
+
+  const entry = {
+    id:       existingId || uid(),
+    title,
+    category: document.getElementById('ff-doc-cat')?.value || 'Sonstiges',
+    date:     document.getElementById('ff-doc-date')?.value || today(),
+    url:      document.getElementById('ff-doc-url')?.value.trim() || '',
+    source:   document.getElementById('ff-doc-source')?.value.trim() || '',
+    tags:     document.getElementById('ff-doc-tags')?.value.trim() || '',
+    notes:    document.getElementById('ff-doc-notes')?.value || '',
+    fileData: existingId ? (D.trainingDocs.find(x=>x.id===existingId)?.fileData||'') : '',
+    fileName: existingId ? (D.trainingDocs.find(x=>x.id===existingId)?.fileName||'') : ''
+  };
+
+  const fileEl = document.getElementById('ff-doc-file');
+  if(fileEl?.files?.length) {
+    const f = fileEl.files[0];
+    const reader = new FileReader();
+    reader.onload = e => {
+      entry.fileData = e.target.result;
+      entry.fileName = f.name;
+      finalizeTrainDoc(entry, existingId);
+    };
+    reader.readAsDataURL(f);
+  } else {
+    finalizeTrainDoc(entry, existingId);
+  }
+}
+
+function finalizeTrainDoc(entry, existingId) {
+  if(!Array.isArray(D.trainingDocs)) D.trainingDocs = [];
+  if(existingId) {
+    const i = D.trainingDocs.findIndex(x=>x.id===existingId);
+    if(i>=0) D.trainingDocs[i]=entry; else D.trainingDocs.push(entry);
+  } else { D.trainingDocs.push(entry); }
+  save(); closeForm(); toast('✓ Gespeichert');
+  trainView='docs';
+  document.querySelectorAll('#train-toggle .tog').forEach((b,i)=>b.classList.toggle('active',i===3));
+  renderTraining();
+}
+
+function editTrainDoc(id) {
+  const doc = D.trainingDocs.find(x=>x.id===id);
+  if(doc) openDocForm(doc);
+}
+
+function delTrainDoc(id) {
+  D.trainingDocs = (D.trainingDocs||[]).filter(x=>x.id!==id);
+  save(); toast('✓ Gelöscht');
+  renderTrainDocs(document.getElementById('train-list'));
+}
+
+function downloadTrainDoc(id) {
+  const doc = D.trainingDocs.find(x=>x.id===id);
+  if(!doc?.fileData) { toast('⚠️ Keine Datei gespeichert'); return; }
+  const a = document.createElement('a');
+  a.href = doc.fileData;
+  a.download = doc.fileName || doc.title || 'Dokument';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+function showDocLightbox(id) {
+  const doc = D.trainingDocs.find(x=>x.id===id);
+  if(!doc?.fileData) return;
+  const lb = document.createElement('div');
+  lb.className = 'photo-lightbox';
+  lb.onclick = () => lb.remove();
+  lb.innerHTML = `
+    <button class="lightbox-close" onclick="event.stopPropagation();this.parentNode.remove()">✕</button>
+    <img src="${doc.fileData}" alt="${esc(doc.fileName||doc.title)}">`;
+  document.body.appendChild(lb);
+}
+
+// ================================================================
+//  INIT
+// ================================================================
+renderDash();
+</script>
+</body>
+</html>
