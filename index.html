@@ -883,6 +883,7 @@
       <button class="tog active" onclick="setTrainView('topics',this)">📚 Themen</button>
       <button class="tog"        onclick="setTrainView('exercises',this)">🎯 Übungen</button>
       <button class="tog"        onclick="setTrainView('log',this)">📊 Training-Log</button>
+      <button class="tog"        onclick="setTrainView('docs',this)">📄 Dokumente</button>
     </div>
     <div id="train-list"></div>
   </section>
@@ -947,7 +948,8 @@ const DEF = {
   healthRecords:[],
   trainingTopicNotes:{},
   exercises:[],
-  trainingSessions:[]
+  trainingSessions:[],
+  trainingDocs:[]
 };
 
 let D = (() => {
@@ -3020,8 +3022,8 @@ function setTrainView(v, btn) {
   const addBtn = document.getElementById('train-add-btn');
   if(addBtn) {
     addBtn.style.display = v==='topics' ? 'none' : '';
-    addBtn.textContent = v==='log' ? '+ Trainingseinheit' : '+ Übung';
-    addBtn.onclick = v==='log' ? openSessionForm : openExerciseForm;
+    addBtn.textContent = v==='log' ? '+ Trainingseinheit' : v==='docs' ? '+ Dokument' : '+ Übung';
+    addBtn.onclick = v==='log' ? openSessionForm : v==='docs' ? openDocForm : openExerciseForm;
   }
   renderTraining();
 }
@@ -3031,12 +3033,13 @@ function renderTraining() {
   const addBtn = document.getElementById('train-add-btn');
   if(addBtn) {
     addBtn.style.display = trainView==='topics' ? 'none' : '';
-    addBtn.textContent = trainView==='log' ? '+ Trainingseinheit' : '+ Übung';
-    addBtn.onclick = trainView==='log' ? openSessionForm : openExerciseForm;
+    addBtn.textContent = trainView==='log' ? '+ Trainingseinheit' : trainView==='docs' ? '+ Dokument' : '+ Übung';
+    addBtn.onclick = trainView==='log' ? openSessionForm : trainView==='docs' ? openDocForm : openExerciseForm;
   }
-  if(trainView==='topics')    renderTrainTopics(el);
+  if(trainView==='topics')         renderTrainTopics(el);
   else if(trainView==='exercises') renderExercises(el);
-  else renderTrainLog(el);
+  else if(trainView==='docs')      renderTrainDocs(el);
+  else                             renderTrainLog(el);
 }
 
 // ── Themen ──────────────────────────────────────────────────────
@@ -3424,6 +3427,197 @@ function editSession(id) {
 function delSession(id) {
   D.trainingSessions = (D.trainingSessions||[]).filter(x=>x.id!==id);
   save(); toast('✓ Gelöscht'); renderTrainLog(document.getElementById('train-list'));
+}
+
+// ================================================================
+//  ERZIEHUNG – DOKUMENTE
+// ================================================================
+const DOC_CATS = ['Hundeschule-Unterlagen','Übungsblätter','Videos / Links','Bücher / Artikel',
+  'Trainingsplan','Zertifikate','Sonstiges'];
+
+function renderTrainDocs(el) {
+  if(!Array.isArray(D.trainingDocs)) D.trainingDocs = [];
+  const docs = [...D.trainingDocs].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  document.getElementById('train-sub').textContent = `${docs.length} Dokumente`;
+
+  if(!docs.length) {
+    el.innerHTML = empty('📄','Noch keine Dokumente gespeichert.<br>Unterlagen aus der Hundeschule, Übungsblätter, Links oder PDFs hier ablegen.');
+    return;
+  }
+
+  // Nach Kategorie gruppieren
+  const groups = {};
+  docs.forEach(d => {
+    const cat = d.category || 'Sonstiges';
+    if(!groups[cat]) groups[cat] = [];
+    groups[cat].push(d);
+  });
+
+  el.innerHTML = Object.entries(groups).map(([cat, items]) => `
+    <div style="margin-bottom:1.1rem">
+      <div style="font-size:.72rem;font-weight:700;color:var(--text-3);text-transform:uppercase;
+        letter-spacing:.07em;margin-bottom:.45rem;display:flex;align-items:center;gap:.5rem">
+        ${esc(cat)}
+        <span style="background:var(--surface-2);color:var(--text-3);border-radius:20px;
+          padding:.1rem .5rem;font-size:.68rem">${items.length}</span>
+      </div>
+      ${items.map(doc => docCard(doc)).join('')}
+    </div>`).join('');
+}
+
+function docCard(doc) {
+  const isFile  = !!doc.fileData;
+  const isLink  = !!doc.url && !isFile;
+  const isPDF   = isFile && doc.fileName?.toLowerCase().endsWith('.pdf');
+  const isImage = isFile && /\.(jpg|jpeg|png|gif|webp)$/i.test(doc.fileName||'');
+  const ico = isPDF ? '📑' : isImage ? '🖼️' : isLink ? '🔗' : '📄';
+
+  return `<div class="card" style="margin-bottom:.5rem">
+    <div class="card-hdr">
+      <div style="display:flex;align-items:flex-start;gap:.6rem;flex:1;min-width:0">
+        <span style="font-size:1.2rem;flex-shrink:0">${ico}</span>
+        <div style="flex:1;min-width:0">
+          <div class="card-title">${esc(doc.title)}</div>
+          <div class="card-sub">${toDE(doc.date)}${doc.source?' · '+esc(doc.source):''}</div>
+        </div>
+      </div>
+      <div class="card-acts">
+        ${isFile ? `<button class="btn btn-secondary btn-sm" onclick="downloadTrainDoc('${doc.id}')">⬇</button>` : ''}
+        ${isLink ? `<a class="btn btn-secondary btn-sm" href="${esc(doc.url)}" target="_blank" rel="noopener">🌐</a>` : ''}
+        <button class="btn btn-secondary btn-sm" onclick="editTrainDoc('${doc.id}')">✏️</button>
+        <button class="btn btn-danger btn-sm" data-id="${doc.id}" onclick="delTrainDoc(this.dataset.id)">🗑</button>
+      </div>
+    </div>
+    ${isImage ? `<img src="${doc.fileData}" alt="${esc(doc.fileName)}"
+      style="max-width:100%;max-height:220px;object-fit:contain;border-radius:6px;margin-top:.5rem;cursor:zoom-in"
+      onclick="showDocLightbox('${doc.id}')">` : ''}
+    ${doc.notes ? `<div style="font-size:.79rem;color:var(--text-2);margin-top:.45rem;white-space:pre-wrap">${esc(doc.notes)}</div>` : ''}
+    <div class="card-meta" style="margin-top:.4rem">
+      ${doc.tags ? doc.tags.split(',').map(t=>t.trim()).filter(Boolean)
+          .map(t=>`<span class="chip gray">${esc(t)}</span>`).join('') : ''}
+    </div>
+  </div>`;
+}
+
+function openDocForm(pre={}) {
+  const catOpts = DOC_CATS.map(c=>`<option${(pre.category||'Hundeschule-Unterlagen')===c?' selected':''}>${c}</option>`).join('');
+  const hasFile = !!pre.fileData;
+
+  document.getElementById('modal-body').innerHTML = `
+    <div class="modal-title">📄 Dokument / Ressource</div>
+    <div class="form-grid">
+      <div class="fg"><label>Titel *</label>
+        <input type="text" id="ff-doc-title" value="${esc(pre.title||'')}"
+          placeholder="z.B. Übungsblatt Sitz & Platz – Einheit 3"></div>
+      <div class="form-row">
+        <div class="fg"><label>Kategorie</label>
+          <select id="ff-doc-cat">${catOpts}</select></div>
+        <div class="fg"><label>Datum</label>
+          <input type="date" id="ff-doc-date" value="${pre.date||today()}"></div>
+      </div>
+      <div class="fg"><label>Datei hochladen (PDF, Bild, Word…)</label>
+        <input type="file" id="ff-doc-file"
+          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.webp,.txt,.md"
+          style="border:none;padding:.2rem 0">
+        ${hasFile?`<div style="font-size:.76rem;color:var(--green);margin-top:.25rem">
+          ✓ Gespeichert: ${esc(pre.fileName||'Datei')}</div>`:''}
+      </div>
+      <div class="fg"><label>Oder Link (URL)</label>
+        <input type="url" id="ff-doc-url" value="${esc(pre.url||'')}"
+          placeholder="https://youtube.com/… oder App-Store-Link"></div>
+      <div class="fg"><label>Quelle / Hundeschule</label>
+        <input type="text" id="ff-doc-source" value="${esc(pre.source||'')}"
+          placeholder="z.B. Hundeschule Müller, YouTube-Kanal…"></div>
+      <div class="fg"><label>Tags (kommagetrennt)</label>
+        <input type="text" id="ff-doc-tags" value="${esc(pre.tags||'')}"
+          placeholder="z.B. Sitz, Anfänger, Übungsblatt"></div>
+      <div class="fg"><label>Notizen</label>
+        <textarea id="ff-doc-notes"
+          placeholder="Kommentare, was gut funktioniert hat, nächste Schritte…"
+          style="min-height:80px">${esc(pre.notes||'')}</textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeForm()">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveTrainDoc('${pre.id||''}')">💾 Speichern</button>
+    </div>`;
+
+  document.getElementById('overlay').style.display='flex';
+}
+
+function saveTrainDoc(existingId) {
+  const title = document.getElementById('ff-doc-title')?.value.trim();
+  if(!title) { document.getElementById('ff-doc-title').style.borderColor='#ef4444'; return; }
+
+  const entry = {
+    id:       existingId || uid(),
+    title,
+    category: document.getElementById('ff-doc-cat')?.value || 'Sonstiges',
+    date:     document.getElementById('ff-doc-date')?.value || today(),
+    url:      document.getElementById('ff-doc-url')?.value.trim() || '',
+    source:   document.getElementById('ff-doc-source')?.value.trim() || '',
+    tags:     document.getElementById('ff-doc-tags')?.value.trim() || '',
+    notes:    document.getElementById('ff-doc-notes')?.value || '',
+    fileData: existingId ? (D.trainingDocs.find(x=>x.id===existingId)?.fileData||'') : '',
+    fileName: existingId ? (D.trainingDocs.find(x=>x.id===existingId)?.fileName||'') : ''
+  };
+
+  const fileEl = document.getElementById('ff-doc-file');
+  if(fileEl?.files?.length) {
+    const f = fileEl.files[0];
+    const reader = new FileReader();
+    reader.onload = e => {
+      entry.fileData = e.target.result;
+      entry.fileName = f.name;
+      finalizeTrainDoc(entry, existingId);
+    };
+    reader.readAsDataURL(f);
+  } else {
+    finalizeTrainDoc(entry, existingId);
+  }
+}
+
+function finalizeTrainDoc(entry, existingId) {
+  if(!Array.isArray(D.trainingDocs)) D.trainingDocs = [];
+  if(existingId) {
+    const i = D.trainingDocs.findIndex(x=>x.id===existingId);
+    if(i>=0) D.trainingDocs[i]=entry; else D.trainingDocs.push(entry);
+  } else { D.trainingDocs.push(entry); }
+  save(); closeForm(); toast('✓ Gespeichert');
+  trainView='docs';
+  document.querySelectorAll('#train-toggle .tog').forEach((b,i)=>b.classList.toggle('active',i===3));
+  renderTraining();
+}
+
+function editTrainDoc(id) {
+  const doc = D.trainingDocs.find(x=>x.id===id);
+  if(doc) openDocForm(doc);
+}
+
+function delTrainDoc(id) {
+  D.trainingDocs = (D.trainingDocs||[]).filter(x=>x.id!==id);
+  save(); toast('✓ Gelöscht');
+  renderTrainDocs(document.getElementById('train-list'));
+}
+
+function downloadTrainDoc(id) {
+  const doc = D.trainingDocs.find(x=>x.id===id);
+  if(!doc?.fileData) { toast('⚠️ Keine Datei gespeichert'); return; }
+  const a = document.createElement('a');
+  a.href = doc.fileData;
+  a.download = doc.fileName || doc.title || 'Dokument';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+function showDocLightbox(id) {
+  const doc = D.trainingDocs.find(x=>x.id===id);
+  if(!doc?.fileData) return;
+  const lb = document.createElement('div');
+  lb.className = 'photo-lightbox';
+  lb.onclick = () => lb.remove();
+  lb.innerHTML = `
+    <button class="lightbox-close" onclick="event.stopPropagation();this.parentNode.remove()">✕</button>
+    <img src="${doc.fileData}" alt="${esc(doc.fileName||doc.title)}">`;
+  document.body.appendChild(lb);
 }
 
 // ================================================================
