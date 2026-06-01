@@ -637,6 +637,91 @@
     #toast.show { transform: translateX(-50%) translateY(0); }
 
     /* ============================================================
+       VACCINE INFO BUTTON & MODAL
+    ============================================================ */
+    .vacc-info-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 1.35rem; height: 1.35rem; border-radius: 50%;
+      background: var(--green-pale); color: var(--green);
+      font-size: .68rem; font-weight: 700; cursor: pointer;
+      border: none; vertical-align: middle; margin-left: .3rem;
+      flex-shrink: 0; transition: background var(--ease);
+    }
+    .vacc-info-btn:hover { background: var(--green-lt); color: #fff; }
+    #vacc-info-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(42,38,32,.45); z-index: 500;
+      align-items: center; justify-content: center; padding: 1rem;
+    }
+    #vacc-info-overlay.open { display: flex; }
+    #vacc-info-box {
+      background: var(--surface); border-radius: var(--radius);
+      box-shadow: var(--shadow-md); max-width: 440px; width: 100%;
+      max-height: 80dvh; overflow-y: auto; padding: 1.4rem 1.5rem;
+    }
+    .vi-title { font-family: var(--fn-display); font-size: 1.1rem; font-weight: 600; color: var(--green); margin-bottom: .2rem; }
+    .vi-abbr  { font-size: .78rem; color: var(--text-2); margin-bottom: .85rem; }
+    .vi-disease {
+      background: var(--surface-2); border-radius: var(--radius-sm);
+      padding: .65rem .85rem; margin-bottom: .5rem; border-left: 3px solid var(--green);
+    }
+    .vi-disease-name { font-weight: 600; font-size: .86rem; margin-bottom: .25rem; }
+    .vi-disease-desc { font-size: .78rem; color: var(--text-2); line-height: 1.55; }
+    .vi-close { margin-top: 1rem; width: 100%; }
+
+    /* ============================================================
+       VACCINATION TIMELINE
+    ============================================================ */
+    .vacc-view-toggle {
+      display: flex; gap: .35rem; align-items: center;
+    }
+    .vacc-view-btn {
+      padding: .3rem .65rem; border-radius: var(--radius-sm);
+      border: 1px solid var(--border); background: var(--surface-2);
+      color: var(--text-2); font-size: .74rem; cursor: pointer;
+      font-family: var(--fn-body); transition: all var(--ease);
+    }
+    .vacc-view-btn.active { background: var(--green); color: #fff; border-color: var(--green); }
+    #vacc-timeline { display: none; }
+    #vacc-timeline.active { display: block; }
+    #vacc-list.hidden { display: none; }
+    .vtl-wrap { position: relative; padding-left: 2rem; margin-top: .5rem; }
+    .vtl-wrap::before {
+      content: ''; position: absolute; left: .65rem; top: .5rem; bottom: .5rem;
+      width: 2px; background: var(--border);
+    }
+    .vtl-item { position: relative; margin-bottom: 1.1rem; }
+    .vtl-dot {
+      position: absolute; left: -1.6rem; top: .28rem;
+      width: .85rem; height: .85rem; border-radius: 50%;
+      background: var(--green); border: 2px solid var(--surface);
+      box-shadow: 0 0 0 2px var(--green);
+    }
+    .vtl-dot.future {
+      background: var(--surface); border-color: var(--amber);
+      box-shadow: 0 0 0 2px var(--amber);
+    }
+    .vtl-dot.done {
+      background: var(--sage); box-shadow: 0 0 0 2px var(--sage);
+    }
+    .vtl-dot.overdue {
+      background: var(--red); box-shadow: 0 0 0 2px var(--red);
+    }
+    .vtl-date { font-size: .7rem; color: var(--text-3); margin-bottom: .12rem; }
+    .vtl-name { font-weight: 600; font-size: .88rem; }
+    .vtl-meta { font-size: .74rem; color: var(--text-2); margin-top: .1rem; }
+    .vtl-group { margin-bottom: 1.6rem; }
+    .vtl-year {
+      font-size: .72rem; font-weight: 700; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: .08em;
+      margin-bottom: .7rem; padding-left: .5rem;
+    }
+    .vtl-booster-line {
+      margin-top: .45rem; padding-top: .45rem;
+      border-top: 1px dashed var(--border); font-size: .74rem;
+    }
+
+    /* ============================================================
        RESPONSIVE
     ============================================================ */
     @media (max-width: 440px) {
@@ -773,10 +858,27 @@
   <section id="tab-impfungen" class="section">
     <div class="sec-hdr">
       <div><div class="sec-title">Impfungen</div><div class="sec-sub" id="vacc-sub">—</div></div>
-      <button class="btn btn-primary" onclick="openForm('vacc')">+ Eintrag</button>
+      <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">
+        <div class="vacc-view-toggle">
+          <button class="vacc-view-btn active" id="vacc-btn-list" onclick="setVaccView('list')">☰ Liste</button>
+          <button class="vacc-view-btn" id="vacc-btn-tl" onclick="setVaccView('timeline')">📅 Timeline</button>
+        </div>
+        <button class="btn btn-primary" onclick="openForm('vacc')">+ Eintrag</button>
+      </div>
     </div>
     <div id="vacc-list"></div>
+    <div id="vacc-timeline"></div>
   </section>
+
+  <!-- ═══ IMPFSTOFF-INFO-MODAL ══════════════════════ -->
+  <div id="vacc-info-overlay" onclick="closeVaccInfo(event)">
+    <div id="vacc-info-box">
+      <div class="vi-title" id="vi-title"></div>
+      <div class="vi-abbr" id="vi-abbr"></div>
+      <div id="vi-diseases"></div>
+      <button class="btn btn-secondary vi-close" onclick="closeVaccInfo()">Schließen</button>
+    </div>
+  </div>
 
   <!-- ═══ LÄUFIGKEIT ═══════════════════════════════ -->
   <section id="tab-laefigkeit" class="section">
@@ -1204,19 +1306,78 @@ function sosBgClose(e) {
 
 //  VACCINATIONS
 // ================================================================
+
+// Extract a normalised base-type key from a vaccine name for booster matching
+function vaccBaseKey(name) {
+  if(!name) return '';
+  const n = name.toUpperCase();
+  if(n.includes('DHPPI') || n.includes('DHPPI'))  return 'DHPPI';
+  if(n.includes('SHPPI'))  return 'SHPPI';
+  if(n.includes('DHP'))    return 'DHP';
+  if(n.includes('RABIES') || n.includes('TOLLWUT') || n.includes('RABISIN') || n.includes('VERSIGUARD')) return 'RABIES';
+  if(n.includes('LEPTO') || /\bL[24]\b/.test(n) || n.includes('NOBIVAC L') || n.includes('LEPTODOG') || n.includes('CANIGEN L') || n.includes('VERSICAN PLUS L')) return 'LEPTO';
+  if(n.includes('PARVOVIROSE') || n.includes('CPV') || n.includes('PRIMODOG')) return 'PARVO';
+  if(n.includes('STAUPE') || n.includes('CDV')) return 'DISTEMPER';
+  if(n.includes('HEPATITIS') || n.includes('HCC') || n.includes('CAV')) return 'HEPATITIS';
+  if(n.includes('PARAINFLUENZA') || n.includes('CPIV')) return 'PARAINFLUENZA';
+  if(n.includes('BORDETELLA') || n.includes('ZWINGERHUSTEN') || n.includes('BRONCHI') || n.includes('NOBIVAC KC')) return 'BORDETELLA';
+  if(n.includes('BORRELIOSE') || n.includes('LYME') || n.includes('MERILYM')) return 'BORRELIOSE';
+  if(n.includes('LEISHMANIOSE') || n.includes('CANILEISH') || n.includes('LETIFEND')) return 'LEISHMANIA';
+  if(n.includes('CORONAVIRUS') || n.includes('CCV')) return 'CCV';
+  return name.trim().toLowerCase();
+}
+
+// Find matching VACCINE_INFO entry for a given vaccine name
+function getVaccInfo(name) {
+  if(!name) return null;
+  const n = name.toUpperCase();
+  for(const [key, info] of Object.entries(VACCINE_INFO)) {
+    if(n.includes(key.toUpperCase())) return info;
+  }
+  return null;
+}
+
+// Check whether a newer vaccination "covers" (boosts) a given record's nextDate
+function isBoosterDone(v, allVaccinations) {
+  if(!v.nextDate) return null;
+  const base = vaccBaseKey(v.name);
+  const booster = allVaccinations.find(other =>
+    other.id !== v.id &&
+    other.date > v.date &&
+    other.date >= v.nextDate &&
+    vaccBaseKey(other.name) === base
+  );
+  return booster || null;
+}
+
+let vaccView = 'list';
+function setVaccView(mode) {
+  vaccView = mode;
+  document.getElementById('vacc-btn-list').classList.toggle('active', mode==='list');
+  document.getElementById('vacc-btn-tl').classList.toggle('active', mode==='timeline');
+  document.getElementById('vacc-list').classList.toggle('hidden', mode!=='list');
+  document.getElementById('vacc-timeline').classList.toggle('active', mode==='timeline');
+  if(mode==='timeline') renderVaccTimeline();
+}
+
 function renderVacc() {
   const sorted = [...D.vaccinations].sort((a,b)=>b.date.localeCompare(a.date));
   document.getElementById('vacc-sub').textContent = sorted.length + ' Einträge';
   const el = document.getElementById('vacc-list');
   if(!sorted.length) { el.innerHTML = empty('💉','Noch keine Impfungen eingetragen.'); return; }
   el.innerHTML = sorted.map(v=>{
-    const d = v.nextDate ? daysAway(v.nextDate) : null;
+    const booster = isBoosterDone(v, D.vaccinations);
+    const d = (!booster && v.nextDate) ? daysAway(v.nextDate) : null;
     const overdue = d!==null && d<0;
+    const info = getVaccInfo(v.name);
+    const infoBtn = info ? `<button class="vacc-info-btn" onclick="showVaccInfo('${esc(v.name)}')" title="Info zur Impfung">i</button>` : '';
     return `<div class="card" style="${overdue?'border-color:#fca5a5':''}">
       <div class="card-hdr">
-        <div>
-          <div class="card-title">${esc(v.name)}</div>
-          <div class="card-sub">Geimpft: ${toDE(v.date)}${v.vet?' · '+esc(v.vet):''}</div>
+        <div style="display:flex;align-items:flex-start;gap:.3rem;flex:1;min-width:0">
+          <div style="min-width:0">
+            <div class="card-title" style="display:flex;align-items:center;gap:.3rem;flex-wrap:wrap">${esc(v.name)}${infoBtn}</div>
+            <div class="card-sub">Geimpft: ${toDE(v.date)}${v.vet?' · '+esc(v.vet):''}</div>
+          </div>
         </div>
         <div class="card-acts">
           <button class="btn btn-secondary btn-sm" onclick="editEntry('vacc','${v.id}')">✏️</button>
@@ -1224,13 +1385,89 @@ function renderVacc() {
         </div>
       </div>
       <div class="card-meta">
-        ${v.nextDate?`<span class="chip ${overdue?'red':d<=60?'amber':''}">Fällig: ${toDE(v.nextDate)}</span>`:''}
+        ${booster
+          ? `<span class="chip" style="background:var(--green-pale);color:var(--green)">✓ Auffrischung: ${toDE(booster.date)}</span>`
+          : v.nextDate ? `<span class="chip ${overdue?'red':d<=60?'amber':''}">Fällig: ${toDE(v.nextDate)}</span>` : ''}
         ${v.batch?`<span class="chip gray">Charge: ${esc(v.batch)}</span>`:''}
-        ${badge(d)}
+        ${!booster ? badge(d) : ''}
       </div>
       ${v.notes?`<div style="font-size:.78rem;color:var(--text-2);margin-top:.45rem">${esc(v.notes)}</div>`:''}
     </div>`;
   }).join('');
+  if(vaccView==='timeline') renderVaccTimeline();
+}
+
+function renderVaccTimeline() {
+  const el = document.getElementById('vacc-timeline');
+  const all = [...D.vaccinations].sort((a,b)=>a.date.localeCompare(b.date));
+  if(!all.length) { el.innerHTML = empty('📅','Noch keine Impfungen für Timeline.'); return; }
+
+  // Build combined list: past vaccinations + future nextDates not yet covered
+  const items = [];
+  const seenNextDates = new Set();
+  all.forEach(v => {
+    items.push({ date: v.date, name: v.name, type: 'done', v });
+    const booster = isBoosterDone(v, D.vaccinations);
+    if(v.nextDate && !booster) {
+      const key = v.nextDate + '|' + vaccBaseKey(v.name);
+      if(!seenNextDates.has(key)) {
+        seenNextDates.add(key);
+        items.push({ date: v.nextDate, name: v.name, type: daysAway(v.nextDate)<0?'overdue':'future', v });
+      }
+    }
+  });
+  items.sort((a,b)=>a.date.localeCompare(b.date));
+
+  // Group by year
+  const byYear = {};
+  items.forEach(item => {
+    const y = item.date.slice(0,4);
+    (byYear[y]||(byYear[y]=[])).push(item);
+  });
+
+  el.innerHTML = Object.entries(byYear).map(([year, entries])=>`
+    <div class="vtl-group">
+      <div class="vtl-year">${year}</div>
+      <div class="vtl-wrap">
+        ${entries.map(item=>{
+          const dotClass = item.type==='future'?'future':item.type==='overdue'?'overdue':item.type==='done'?'done':'';
+          const info = getVaccInfo(item.name);
+          const infoBtn = info ? `<button class="vacc-info-btn" onclick="showVaccInfo('${esc(item.name)}')" title="Info">i</button>` : '';
+          const meta = item.type==='done'
+            ? (item.v.vet?`Tierarzt: ${esc(item.v.vet)}`:'')
+            : item.type==='overdue'
+              ? `<span style="color:var(--red);font-weight:600">Überfällig seit ${toDE(item.date)}</span>`
+              : `<span style="color:var(--amber)">Booster fällig: ${toDE(item.date)}</span>`;
+          return `<div class="vtl-item">
+            <div class="vtl-dot ${dotClass}"></div>
+            <div class="vtl-date">${toDE(item.date)}${item.type!=='done'?' · geplant':''}</div>
+            <div class="vtl-name" style="display:flex;align-items:center;gap:.3rem">${esc(item.name)}${infoBtn}</div>
+            ${meta?`<div class="vtl-meta">${meta}</div>`:''}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function showVaccInfo(name) {
+  const info = getVaccInfo(name);
+  if(!info) return;
+  document.getElementById('vi-title').textContent = info.label || name;
+  document.getElementById('vi-abbr').textContent = info.abbr || '';
+  document.getElementById('vi-diseases').innerHTML = info.diseases.map(d=>
+    `<div class="vi-disease">
+      <div class="vi-disease-name">🦠 ${esc(d.name)}</div>
+      <div class="vi-disease-desc">${esc(d.desc)}</div>
+    </div>`
+  ).join('');
+  document.getElementById('vacc-info-overlay').classList.add('open');
+}
+
+function closeVaccInfo(e) {
+  if(!e || e.target.id==='vacc-info-overlay') {
+    document.getElementById('vacc-info-overlay').classList.remove('open');
+  }
 }
 
 // ================================================================
@@ -1951,25 +2188,155 @@ const AT_VACCINES = {
     'DHPPi – Nobivac DHPPi (MSD)',
     'DHPPi – Eurican DHPPI2 (Boehringer)',
     'DHPPi – Canigen DHPPi (Virbac)',
+    'DHP – Nobivac DHP (MSD)',
+    'SHPPi – Nobivac SHPPi (MSD)',
     'Puppy DP – Nobivac Puppy DP (MSD)',
-    'DHPPi + L4 – Nobivac DHPPi+L4',
-    'DHPPi + Tollwut – Kombination',
-    'DHPPi + Tollwut + L4 – Kombination',
-    'Versican Plus DHPPiLR (Zoetis)',
+    'Primodog – Parvovirose monovalent (MSD)',
+    'DHPPi + L4 – Nobivac DHPPi+L4 (MSD)',
+    'DHPPi + L4 – Canigen CHPPiL4 (Virbac)',
+    'DHPPi + L4 – Eurican DHPPI2-L (Boehringer)',
+    'DHPPi + Tollwut – Nobivac DHPPi+R (MSD)',
+    'DHPPi + Tollwut + L4 – Nobivac DHPPi+RL4 (MSD)',
+    'DHPPi + Tollwut + L4 – Versican Plus DHPPiLR (Zoetis)',
+    'DHPPi + Tollwut + L4 – Eurican DHPPI2-LR (Boehringer)',
+    'Leptodog – Leptospirose (Boehringer)',
+    'Leptospirose – Nobivac L4 (MSD)',
+    'Leptospirose – Canigen L (Virbac)',
+    'Leptospirose – Versican Plus L4 (Zoetis)',
     'Rabies – Nobivac Rabies (MSD)',
     'Rabies – Rabisin (Boehringer)',
     'Rabies – Versiguard Rabies (Zoetis)',
-    'Leptospirose – Nobivac L4 (MSD)',
-    'Leptospirose – Canigen L (Virbac)'
+    'Parainfluenza – Nobivac Pi (MSD)'
   ],
   'Situative Impfungen': [
-    'Borreliose / Lyme – Merilym 3',
+    'Borreliose / Lyme – Merilym 3 (MSD)',
     'Leishmaniose – CaniLeish (Virbac)',
     'Leishmaniose – Letifend (Leti)',
     'Coronavirus (CCV)',
     'Zwingerhusten intranasal – Nobivac KC (MSD)',
-    'Zwingerhusten intranasal – Bronchi-Shield III (Zoetis)'
+    'Zwingerhusten intranasal – Bronchi-Shield III (Zoetis)',
+    'Zwingerhusten oral – Bronchi-Shield Oral (Zoetis)'
   ]
+};
+
+// Impfstoff-Infobank: Abkürzungen, Schutz gegen, Erkrankungsbeschreibungen
+const VACCINE_INFO = {
+  // ── Einzelkomponenten ──────────────────────────────────────────
+  'CDV': {
+    label: 'Staupe (CDV)',
+    abbr: 'CDV = Canine Distemper Virus',
+    diseases: [{ name: 'Staupe (Canine Distemper)', desc: 'Hochansteckende Viruserkrankung, die Atemwege, Magen-Darm-Trakt und das Nervensystem befällt. Oft tödlich, keine kausale Therapie. Kernimpfung nach WSAVA.' }]
+  },
+  'CPV': {
+    label: 'Parvovirose (CPV-2)',
+    abbr: 'CPV-2 = Canine Parvovirus Typ 2',
+    diseases: [{ name: 'Parvovirose', desc: 'Schwere, lebensbedrohliche Magen-Darm-Erkrankung mit blutigem Durchfall, Erbrechen und hoher Sterblichkeit vor allem bei Welpen. Kernimpfung nach WSAVA.' }]
+  },
+  'CAV': {
+    label: 'Infektiöse Hepatitis (CAV)',
+    abbr: 'CAV-2 = Canine Adenovirus Typ 2',
+    diseases: [{ name: 'Infektiöse Hepatitis (HCC)', desc: 'Virale Leberentzündung, die zu akutem Leberversagen führen kann. CAV-2-Impfstoff schützt auch gegen CAV-1 (Rubarth-Hepatitis). Kernimpfung nach WSAVA.' }]
+  },
+  'Tollwut': {
+    label: 'Tollwut (Rabies)',
+    abbr: 'Rabies = Tollwutvirus (Lyssavirus)',
+    diseases: [{ name: 'Tollwut', desc: 'Immer tödliche Viruserkrankung des Zentralnervensystems. Zoonose – auch auf Menschen übertragbar. In AT gesetzlich vorgeschrieben für Reisen ins Ausland. Kernimpfung nach WSAVA.' }]
+  },
+  'Lepto': {
+    label: 'Leptospirose',
+    abbr: 'L2 = 2-Serovar-Schutz · L4 = 4-Serovar-Schutz',
+    diseases: [{ name: 'Leptospirose', desc: 'Bakterielle Erkrankung (Leptospira spp.) mit Nieren- und Leberversagen. Gefährliche Zoonose (auf Menschen übertragbar). Übertragung über kontaminiertes Wasser / Nagetierkontakt. Jährliche Auffrischung empfohlen.' }]
+  },
+  'CPiV': {
+    label: 'Parainfluenza (CPiV)',
+    abbr: 'CPiV = Canine Parainfluenza Virus',
+    diseases: [{ name: 'Zwingerhusten-Komplex (Parainfluenza)', desc: 'Atemwegsvirus, das zum Zwingerhusten-Komplex (CIRD) gehört. Verursacht Husten, Nasenausfluss und Bronchitis. Häufig in Kombination mit Bordetella.' }]
+  },
+  'Bordetella': {
+    label: 'Zwingerhusten (Bordetella)',
+    abbr: 'Bordetella bronchiseptica',
+    diseases: [{ name: 'Zwingerhusten (CIRD)', desc: 'Hochansteckende Atemwegsbakterie, Haupterreger des Zwingerhustens. Kann als Spray, Tropfen (intranasal) oder injizierbar verabreicht werden. Besonders wichtig bei Hundekontakten (Pension, Ausstellung, Training).' }]
+  },
+  'Borreliose': {
+    label: 'Borreliose / Lyme',
+    abbr: 'Borrelia burgdorferi (Zeckenborreliose)',
+    diseases: [{ name: 'Borreliose (Lyme-Krankheit)', desc: 'Durch Zecken übertragene Bakterien-Infektion. Verursacht Lahmheit, Gelenkschwellungen, Fieber und kann Nieren, Herz und Nervensystem schädigen. Impfung (Merilym 3) plus Zeckenschutz empfohlen.' }]
+  },
+  'Leishmaniose': {
+    label: 'Leishmaniose',
+    abbr: 'Leishmania infantum',
+    diseases: [{ name: 'Leishmaniose', desc: 'Durch Sandmücken übertragene Protozoen-Erkrankung. In AT importiert aus Mittelmeerraum / Südeuropa. Verursacht Hautveränderungen, Gewichtsverlust, Nierenschäden. Impfung (CaniLeish / Letifend) für Reisehunde in Endemiegebiete empfohlen.' }]
+  },
+  'CCV': {
+    label: 'Coronavirus (CCV)',
+    abbr: 'CCV = Canines Coronavirus (enteral)',
+    diseases: [{ name: 'Canines Coronavirus (enteral)', desc: 'Verursacht milde bis mittelschwere Magen-Darm-Erkrankungen. Klinisch weniger bedeutsam als Parvovirose; Impfung nur situativ empfohlen.' }]
+  },
+  // ── Kombinationsimpfstoffe (Abkürzungen) ──────────────────────
+  'DHPPi': {
+    label: 'DHPPi',
+    abbr: 'D = Distemper · H = Hepatitis (CAV-2) · P = Parvovirose · Pi = Parainfluenza',
+    diseases: [
+      { name: 'Staupe (Distemper)', desc: 'Hochansteckende, oft tödliche Viruserkrankung mit Beteiligung von Atemwegen, Magen-Darm-Trakt und Nervensystem.' },
+      { name: 'Infektiöse Hepatitis (HCC)', desc: 'Virale Leberentzündung durch Adenovirus (CAV-2-Impfstoff schützt auch gegen CAV-1).' },
+      { name: 'Parvovirose', desc: 'Lebensbedrohliche Magen-Darm-Erkrankung, besonders gefährlich für Welpen.' },
+      { name: 'Parainfluenza', desc: 'Atemwegsvirus als Teil des Zwingerhusten-Komplexes (CIRD).' }
+    ]
+  },
+  'DHP': {
+    label: 'DHP',
+    abbr: 'D = Distemper · H = Hepatitis (CAV-2) · P = Parvovirose (ohne Parainfluenza)',
+    diseases: [
+      { name: 'Staupe (Distemper)', desc: 'Hochansteckende, oft tödliche Viruserkrankung.' },
+      { name: 'Infektiöse Hepatitis (HCC)', desc: 'Virale Leberentzündung durch Adenovirus.' },
+      { name: 'Parvovirose', desc: 'Lebensbedrohliche Magen-Darm-Erkrankung.' }
+    ]
+  },
+  'SHPPi': {
+    label: 'SHPPi',
+    abbr: 'S = Staupe · H = Hepatitis · P = Parvovirose · Pi = Parainfluenza · (modifiziertes Lebendvirus-Kombipräparat, MSD)',
+    diseases: [
+      { name: 'Staupe (Distemper)', desc: 'Hochansteckende, oft tödliche Viruserkrankung mit Beteiligung von Atemwegen, Magen-Darm-Trakt und Nervensystem.' },
+      { name: 'Infektiöse Hepatitis (HCC)', desc: 'Virale Leberentzündung durch Adenovirus.' },
+      { name: 'Parvovirose', desc: 'Lebensbedrohliche Magen-Darm-Erkrankung, besonders bei Welpen.' },
+      { name: 'Parainfluenza', desc: 'Atemwegsvirus, Teil des Zwingerhusten-Komplexes.' }
+    ]
+  },
+  'L4': {
+    label: 'Leptospirose L4',
+    abbr: 'L4 = Schutz gegen 4 Leptospira-Serovare (Canicola, Icterohaemorrhagiae, Australis, Grippotyphosa)',
+    diseases: [{ name: 'Leptospirose', desc: 'Bakterielle Erkrankung mit Nieren- und Leberversagen. Zoonose, übertragbar auf Menschen. L4 bietet breiteren Schutz als L2 und ist in AT Standard.' }]
+  },
+  'L2': {
+    label: 'Leptospirose L2',
+    abbr: 'L2 = Schutz gegen 2 Leptospira-Serovare (Canicola, Icterohaemorrhagiae)',
+    diseases: [{ name: 'Leptospirose', desc: 'Bakterielle Erkrankung mit Nieren- und Leberversagen. Zoonose. L2 bietet eingeschränkteren Schutz als L4.' }]
+  },
+  'Rabies': {
+    label: 'Tollwut (Rabies)',
+    abbr: 'Rabies = Tollwutvirus',
+    diseases: [{ name: 'Tollwut', desc: 'Immer tödliche Zoonose. Pflichtimpfung für Auslandsreisen. Kernimpfung nach WSAVA.' }]
+  },
+  'Merilym': {
+    label: 'Merilym 3 (Borreliose)',
+    abbr: 'Merilym 3 = Borreliose-Impfstoff (MSD), schützt gegen 3 Borrelia-Stämme',
+    diseases: [{ name: 'Borreliose (Lyme)', desc: 'Zeckenübertragene Bakterien-Infektion. Verursacht Lahmheit, Gelenk- und Organschäden. Jährliche Auffrischung.' }]
+  },
+  'CaniLeish': {
+    label: 'CaniLeish (Leishmaniose)',
+    abbr: 'CaniLeish = Leishmaniose-Impfstoff (Virbac)',
+    diseases: [{ name: 'Leishmaniose', desc: 'Sandmücken-übertragene Protozoen-Erkrankung, vor allem in Südeuropa. Für Reisehunde relevant.' }]
+  },
+  'Letifend': {
+    label: 'Letifend (Leishmaniose)',
+    abbr: 'Letifend = Leishmaniose-Impfstoff (Leti)',
+    diseases: [{ name: 'Leishmaniose', desc: 'Sandmücken-übertragene Protozoen-Erkrankung. Für Reisehunde in Endemiegebieten.' }]
+  },
+  'Primodog': {
+    label: 'Primodog (Parvovirose)',
+    abbr: 'Primodog = monovalenter Parvovirose-Impfstoff (MSD) – nur CPV-2',
+    diseases: [{ name: 'Parvovirose', desc: 'Lebensbedrohliche Magen-Darm-Erkrankung, besonders bei Welpen. Monovalent – nur Parvovirose, keine anderen Komponenten.' }]
+  }
 };
 
 // Österreichische Parasitenprodukte (AGES-registriert, Stand 2026)
